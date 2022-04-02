@@ -7,6 +7,7 @@
 '''
 import view
 import random
+import sql
 
 # Initialise our views, all arguments are defaults for the template
 page_view = view.View()
@@ -49,19 +50,24 @@ def login_check(username, password):
 
     # By default assume good creds
     login = True
+
+    # Connect to the database
+    sql_db = sql.SQLDatabase()
+    #sql_db.database_setup()
+    login = sql_db.check_credentials(username,password)
     
-    if username != "admin": # Wrong Username
+    '''if username != "admin": # Wrong Username
         err_str = "Incorrect Username"
         login = False
     
     if password != "password": # Wrong password
         err_str = "Incorrect Password"
-        login = False
+        login = False'''
         
     if login: 
         return page_view("valid", name=username)
     else:
-        return page_view("invalid", reason=err_str)
+        return page_view("invalid", reason="Incorrect Username or Password")
 
 #-----------------------------------------------------------------------------
 # About

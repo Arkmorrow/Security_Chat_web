@@ -13,8 +13,8 @@ class SQLDatabase():
     '''
 
     # Get the database running
-    def __init__(self, database_arg=":memory:"):
-        self.conn = sqlite3.connect(database_arg)
+    def __init__(self):
+        self.conn = sqlite3.connect("database.db", uri=True)
         self.cur = self.conn.cursor()
 
     # SQLite 3 does not natively support multiple commands in a single statement
@@ -45,7 +45,7 @@ class SQLDatabase():
 
         # Create the users table
         self.execute("""CREATE TABLE Users(
-            Id INT,
+            Id INTEGER PRIMARY KEY,
             username TEXT,
             password TEXT,
             admin INTEGER DEFAULT 0
@@ -54,17 +54,17 @@ class SQLDatabase():
         self.commit()
 
         # Add our admin user
-        self.add_user('admin', "admin_pasword", admin=1)
+        self.add_user('admin', 'admin', 1)
 
     #-----------------------------------------------------------------------------
     # User handling
     #-----------------------------------------------------------------------------
 
     # Add a user to the database
-    def add_user(self, username, password, admin=0):
+    def add_user(self, username, password, admin):
         sql_cmd = """
-                INSERT INTO Users
-                VALUES({id}, '{username}', '{password}', {admin})
+                INSERT INTO Users(username, password, admin)
+                VALUES('{username}', '{password}', {admin})
             """
 
         sql_cmd = sql_cmd.format(username=username, password=password, admin=admin)
@@ -78,15 +78,17 @@ class SQLDatabase():
     # Check login credentials
     def check_credentials(self, username, password):
         sql_query = """
-                SELECT 1 
+                SELECT *
                 FROM Users
                 WHERE username = '{username}' AND password = '{password}'
             """
 
         sql_query = sql_query.format(username=username, password=password)
 
+        self.execute(sql_query)
+
         # If our query returns
-        if cur.fetchone():
+        if self.cur.fetchone():
             return True
         else:
             return False
