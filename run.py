@@ -17,6 +17,7 @@ import os
 import sys
 import sql
 from bottle import run
+import gunicorn
 
 
 #-----------------------------------------------------------------------------
@@ -46,7 +47,7 @@ def run_server():
         run_server
         Runs a bottle server
     '''
-    run(host=host, port=port, debug=debug)
+    run(host=host, port=port, server='gunicorn', keyfile='localhost.key', certfile='localhost.crt', debug=debug) 
 
 #-----------------------------------------------------------------------------
 # Optional SQL support
@@ -60,7 +61,9 @@ def manage_db():
     database_args = ":memory:" # Currently runs in RAM, might want to change this to a file if you use it
     sql_db = sql.SQLDatabase()
     sql_db.database_setup()
-    sql_db.check_credentials("admin","admin")
+    
+    # Print the https domain
+    print("Please you this https Domain: https://localhost:8081")
 
     return
 
@@ -90,7 +93,6 @@ def run_commands(args):
     for command in command_list:
 
         command_list[command]()
-
 
 #-----------------------------------------------------------------------------
 
