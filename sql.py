@@ -92,3 +92,23 @@ class SQLDatabase():
             return True
         else:
             return False
+
+    #-----------------------------------------------------------------------------
+
+    # Check if the username is exist
+    def check_username(self, username):
+        sql_query = """
+                SELECT *
+                FROM Users
+                WHERE username = '{username}'
+            """
+
+        sql_query = sql_query.format(username=username)
+
+        self.execute(sql_query)
+
+        # If our query returns
+        if self.cur.fetchone():
+            return True
+        else:
+            return False

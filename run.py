@@ -47,7 +47,7 @@ def run_server():
         run_server
         Runs a bottle server
     '''
-    run(host=host, port=port, server='gunicorn', keyfile='localhost.key', certfile='localhost.crt', debug=debug) 
+    run(host=host, port=port, server='gunicorn', keyfile='certificates/localhost.key', certfile='certificates/localhost.crt', debug=debug) 
 
 #-----------------------------------------------------------------------------
 # Optional SQL support
@@ -63,7 +63,7 @@ def manage_db():
     sql_db.database_setup()
     
     # Print the https domain
-    print("Please you this https Domain: https://localhost:8081")
+    print("Please use this HTTPS Domain: https://localhost:8081")
 
     return
 

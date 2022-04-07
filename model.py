@@ -35,6 +35,17 @@ def login_form():
     return page_view("login")
 
 #-----------------------------------------------------------------------------
+# Register
+#-----------------------------------------------------------------------------
+
+def register_form():
+    '''
+        register_form
+        Returns the view for the register_form
+    '''
+    return page_view("register")
+
+#-----------------------------------------------------------------------------
 
 # Check the login credentials
 def login_check(username, password):
@@ -56,19 +67,42 @@ def login_check(username, password):
     #sql_db.database_setup()
     login = sql_db.check_credentials(username,password)
     
-    '''if username != "admin": # Wrong Username
-        err_str = "Incorrect Username"
-        login = False
-    
-    if password != "password": # Wrong password
-        err_str = "Incorrect Password"
-        login = False'''
         
     if login: 
         return page_view("valid", name=username)
     else:
         return page_view("invalid", reason="Incorrect Username or Password")
 
+#-----------------------------------------------------------------------------
+
+# Register a user account
+def register_account(username, password, confirm_password):
+    '''
+        register_account
+        Register a user account
+
+        :: username :: The username
+        :: password :: The password
+        :: confirm password :: The confirm password that need to match
+
+        Returns either a view for valid register, or a view for invalid register
+    '''
+
+    #check the confirm password and password are the same
+    if confirm_password != password:
+        return page_view("invalid", reason="The Password and Confirm Password are not match")
+
+    # Connect to the database
+    sql_db = sql.SQLDatabase()
+    #sql_db.database_setup()
+    check_duplice = sql_db.check_username(username)
+        
+    if check_duplice: 
+        return page_view("invalid", reason="This Username is exist")
+    else:
+        sql_db.add_user(username, password, 0)
+        return page_view("valid", name=username)
+        
 #-----------------------------------------------------------------------------
 # About
 #-----------------------------------------------------------------------------
