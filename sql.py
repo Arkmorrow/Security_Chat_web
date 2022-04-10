@@ -1,4 +1,5 @@
 import sqlite3
+import bcrypt
 
 # This class is a simple handler for all of our SQL database actions
 # Practicing a good separation of concerns, we should only ever call 
@@ -67,6 +68,9 @@ class SQLDatabase():
                 VALUES('{username}', '{password}', {admin})
             """
 
+        # Hash the password
+        password = bcrypt.hashpw(password.encode('ascii'), bcrypt.gensalt()).hex()
+
         sql_cmd = sql_cmd.format(username=username, password=password, admin=admin)
 
         self.execute(sql_cmd)
@@ -78,17 +82,23 @@ class SQLDatabase():
     # Check login credentials
     def check_credentials(self, username, password):
         sql_query = """
-                SELECT *
+                SELECT password
                 FROM Users
-                WHERE username = '{username}' AND password = '{password}'
+                WHERE username = '{username}'
             """
 
-        sql_query = sql_query.format(username=username, password=password)
+        sql_query = sql_query.format(username=username)
 
         self.execute(sql_query)
 
-        # If our query returns
-        if self.cur.fetchone():
+        stored_password = self.cur.fetchone()
+
+        # Check if the user is in database
+        if stored_password == None:
+            return False
+
+        # Check if the hash is same
+        if bcrypt.checkpw(password.encode('ascii'), bytes.fromhex(stored_password[0])):
             return True
         else:
             return False

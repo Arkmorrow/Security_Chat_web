@@ -61,6 +61,7 @@ def manage_db():
     database_args = ":memory:" # Currently runs in RAM, might want to change this to a file if you use it
     sql_db = sql.SQLDatabase()
     sql_db.database_setup()
+    print(sql_db.check_credentials("admin","admin"))
     
     # Print the https domain
     print("Please use this HTTPS Domain: https://localhost:8081")

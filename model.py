@@ -9,6 +9,7 @@ import view
 import random
 import sql
 
+
 # Initialise our views, all arguments are defaults for the template
 page_view = view.View()
 
@@ -76,7 +77,7 @@ def login_check(username, password):
 #-----------------------------------------------------------------------------
 
 # Register a user account
-def register_account(username, password, confirm_password):
+def register_account(username, password):
     '''
         register_account
         Register a user account
@@ -88,10 +89,6 @@ def register_account(username, password, confirm_password):
         Returns either a view for valid register, or a view for invalid register
     '''
 
-    #check the confirm password and password are the same
-    if confirm_password != password:
-        return page_view("invalid", reason="The Password and Confirm Password are not match")
-
     # Connect to the database
     sql_db = sql.SQLDatabase()
     #sql_db.database_setup()
@@ -100,6 +97,7 @@ def register_account(username, password, confirm_password):
     if check_duplice: 
         return page_view("invalid", reason="This Username is exist")
     else:
+        #Store the password hashed by bcrypt with salt
         sql_db.add_user(username, password, 0)
         return page_view("valid", name=username)
         
