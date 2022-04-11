@@ -47,6 +47,10 @@ def run_server():
         run_server
         Runs a bottle server
     '''
+    # use openssl to generate key pairs and certificate.
+    # key_file : certificates/localhost.key
+    # cert_file : certificates/localhost.crt
+    
     run(host=host, port=port, server='gunicorn', keyfile='certificates/localhost.key', certfile='certificates/localhost.crt', debug=debug) 
 
 #-----------------------------------------------------------------------------
@@ -55,17 +59,17 @@ def run_server():
 # uncomment the following one to load an SQLite3 database
 def manage_db():
     '''
-        manage_db
-        Starts up and re-initialises an SQL databse for the server
+        Blank function for database support, use as needed
     '''
-    database_args = ":memory:" # Currently runs in RAM, might want to change this to a file if you use it
-    sql_db = sql.SQLDatabase()
+    database_args = "./test.db"
+    sql_db = sql.SQLDatabase(database_args)
     sql_db.database_setup()
-    
-    # Print the https domain
-    print("Please use this HTTPS Domain: https://localhost:8081")
+    sql_db.commit()
 
-    return
+    print(sql_db.debug())
+    print(sql_db.get_user('admin'))
+
+    pass
 
 
 #-----------------------------------------------------------------------------
