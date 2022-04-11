@@ -8,6 +8,8 @@
 import view
 import random
 import sql
+import uuid
+import hashlib
 
 
 # Initialise our views, all arguments are defaults for the template
@@ -49,6 +51,41 @@ def register_form():
 #-----------------------------------------------------------------------------
 
 # Check the login credentials
+# def login_check(username, password):
+#     '''
+#         login_check
+#         Checks usernames and passwords
+
+#         :: username :: The username
+#         :: password :: The password
+
+#         Returns either a view for valid credentials, or a view for invalid credentials
+#     '''
+
+#     # By default assume good creds
+#     login = True
+
+#     # Connect to the database
+#     sql_db = sql.SQLDatabase()
+#     #sql_db.database_setup()
+#     login = sql_db.check_credentials(username,password)
+    
+        
+#     if login: 
+#         return page_view("valid", name=username)
+#     else:
+#         return page_view("invalid", reason="Incorrect Username or Password")
+
+def login_form():
+    '''
+        login_form
+        Returns the view for the login_form
+    '''
+    return page_view("login")
+
+#-----------------------------------------------------------------------------
+
+# Check the login credentials
 def login_check(username, password):
     '''
         login_check
@@ -61,18 +98,35 @@ def login_check(username, password):
     '''
 
     # By default assume good creds
-    login = True
 
-    # Connect to the database
-    sql_db = sql.SQLDatabase()
-    #sql_db.database_setup()
-    login = sql_db.check_credentials(username,password)
+    sql_db = sql.SQLDatabase('test.db')
+    user_record = sql_db.get_user(username)
+
+    if len(user_record) == 0:
+        return page_view("invalid", reason='username does not exist.')
+
+
+    db_username, db_password = user_record[0][0], user_record[0][1]
+    salt = user_record[0][2]
+
+    password_salt = salt + password
+    password_hash = hashlib.sha256(password_salt.encode()).hexdigest()
     
+    if username != db_username: # Wrong Username
+        err_str = "Incorrect Username"
+
+    # import pdb
+    # pdb.set_trace()
+    
+    if db_password != password_hash: # Wrong password
+        err_str = "Incorrect Password"
         
+    login = sql_db.check_credentials(username, password_hash)
+
     if login: 
         return page_view("valid", name=username)
     else:
-        return page_view("invalid", reason="Incorrect Username or Password")
+        return page_view("invalid", reason=err_str)
 
 #-----------------------------------------------------------------------------
 
