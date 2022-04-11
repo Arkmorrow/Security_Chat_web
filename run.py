@@ -61,13 +61,14 @@ def manage_db():
     '''
         Blank function for database support, use as needed
     '''
-    database_args = "./test.db"
-    sql_db = sql.SQLDatabase(database_args)
+    sql_db = sql.SQLDatabase()
     sql_db.database_setup()
-    sql_db.commit()
 
-    print(sql_db.debug())
-    print(sql_db.get_user('admin'))
+    # Print the https domain, Please use this link to visit
+    print("Please use this HTTPS Domain: https://localhost:8081")
+
+    #print(sql_db.debug())
+    #print(sql_db.get_user('admin'))
 
     pass
 

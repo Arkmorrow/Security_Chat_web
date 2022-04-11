@@ -1,4 +1,4 @@
 bottle
 sqlite3
-gunicorn
-bcrypt
+uuid
+hashlib

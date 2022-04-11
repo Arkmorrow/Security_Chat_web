@@ -1,5 +1,6 @@
 import sqlite3
-import bcrypt
+import uuid
+import hashlib
 
 # This class is a simple handler for all of our SQL database actions
 # Practicing a good separation of concerns, we should only ever call 
@@ -38,24 +39,6 @@ class SQLDatabase():
     
     # Sets up the database
     # Default admin password
-#     def database_setup(self, admin_password='admin'):
-
-#         # Clear the database if needed
-#         self.execute("DROP TABLE IF EXISTS Users")
-#         self.commit()
-
-#         # Create the users table
-#         self.execute("""CREATE TABLE Users(
-#             Id INTEGER PRIMARY KEY,
-#             username TEXT,
-#             password TEXT,
-#             admin INTEGER DEFAULT 0
-#         )""")
-
-#         self.commit()
-
-#         # Add our admin user
-#         self.add_user('admin', 'admin', 1)
     def database_setup(self, admin_password='admin'):
 
         # Clear the database if needed
@@ -72,34 +55,31 @@ class SQLDatabase():
 
         self.commit()
 
-        # Generate a random number as salt.
-        salt = uuid.uuid4().hex
-
-        password_salt = salt + admin_password
-        password_hash = hashlib.sha256(password_salt.encode()).hexdigest()
-
         # Add our admin user
-        self.add_user('admin', password_hash, salt, admin=1)
+        self.add_user('admin', admin_password, admin=1)
 
     #-----------------------------------------------------------------------------
     # User handling
     #-----------------------------------------------------------------------------
 
-#     # Add a user to the database
-#     def add_user(self, username, password, admin):
-#         sql_cmd = """
-#                 INSERT INTO Users(username, password, admin)
-#                 VALUES('{username}', '{password}', {admin})
-#             """
+     # Add a user to the database
+    def add_user(self, username, password, admin):
+        sql_cmd = """
+                INSERT INTO Users(username, password, salt, admin)
+                VALUES('{username}', '{password}', '{salt}', {admin})
+           """
 
-#         # Hash the password
-#         password = bcrypt.hashpw(password.encode('ascii'), bcrypt.gensalt()).hex()
+        # Generate a random number as salt.
+        salt = uuid.uuid4().hex
 
-#         sql_cmd = sql_cmd.format(username=username, password=password, admin=admin)
+        password_salt = salt + password
+        password_hash = hashlib.sha256(password_salt.encode()).hexdigest()
 
-#         self.execute(sql_cmd)
-#         self.commit()
-#         return True
+        sql_cmd = sql_cmd.format(username=username, password=password_hash, salt=salt, admin=admin)
+
+        self.execute(sql_cmd)
+        self.commit()
+        return True
 
     #-----------------------------------------------------------------------------
 
@@ -127,29 +107,6 @@ class SQLDatabase():
 
         return self.cur.fetchall()
     
-#     # Check login credentials
-#     def check_credentials(self, username, password):
-#         sql_query = """
-#                 SELECT password
-#                 FROM Users
-#                 WHERE username = '{username}'
-#             """
-
-#         sql_query = sql_query.format(username=username)
-
-#         self.execute(sql_query)
-
-#         stored_password = self.cur.fetchone()
-
-#         # Check if the user is in database
-#         if stored_password == None:
-#             return False
-
-#         # Check if the hash is same
-#         if bcrypt.checkpw(password.encode('ascii'), bytes.fromhex(stored_password[0])):
-#             return True
-#         else:
-#             return False
 
     # Check login credentials
     def check_credentials(self, username, password):

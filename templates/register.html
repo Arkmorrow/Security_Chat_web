@@ -4,11 +4,11 @@ Register with a username and password
 
 <p>
 <form action="/register" method="post">
-    Username: <input name="username" id="password" type="text" />
+    Username: <input name="username" type="text" />
 </br>
-    Password: <input name="password" id="confirm_password" type="password" required="required" onkeyup='check();'/>
+    Password: <input name="password" id="password" type="password" required="required" onkeyup='check();'/>
 </br>
-    Confirm Password: <input name="password_confirm" required="required" type="password" onkeyup='check();'/>
+    Confirm Password: <input name="confirm_password" id="confirm_password" required="required" type="password" onkeyup='check();'/>
     <span id='check_message'></span>
 </br>
     <input value="Register" type="submit" id="register"/>

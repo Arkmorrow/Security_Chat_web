@@ -27,21 +27,6 @@ def index():
     return page_view("index")
 
 #-----------------------------------------------------------------------------
-# Login
-#-----------------------------------------------------------------------------
-
-def login_form():
-    '''
-        login_form
-        Returns the view for the login_form
-    '''
-    return page_view("login")
-
-#-----------------------------------------------------------------------------
-# Register
-#-----------------------------------------------------------------------------
-
-#-----------------------------------------------------------------------------
 # Register
 #-----------------------------------------------------------------------------
 
@@ -57,7 +42,7 @@ def register_check(username, password):
     password_salt = salt + password
     password_hash = hashlib.sha256(password_salt.encode()).hexdigest()
 
-    sql_db = sql.SQLDatabase('test.db')
+    sql_db = sql.SQLDatabase()
 
     record = sql_db.get_user(username)
 
@@ -72,32 +57,6 @@ def register_check(username, password):
         return page_view("valid", name=username)
 
 #-----------------------------------------------------------------------------
-
-# Check the login credentials
-# def login_check(username, password):
-#     '''
-#         login_check
-#         Checks usernames and passwords
-
-#         :: username :: The username
-#         :: password :: The password
-
-#         Returns either a view for valid credentials, or a view for invalid credentials
-#     '''
-
-#     # By default assume good creds
-#     login = True
-
-#     # Connect to the database
-#     sql_db = sql.SQLDatabase()
-#     #sql_db.database_setup()
-#     login = sql_db.check_credentials(username,password)
-    
-        
-#     if login: 
-#         return page_view("valid", name=username)
-#     else:
-#         return page_view("invalid", reason="Incorrect Username or Password")
 
 def login_form():
     '''
@@ -122,7 +81,7 @@ def login_check(username, password):
 
     # By default assume good creds
 
-    sql_db = sql.SQLDatabase('test.db')
+    sql_db = sql.SQLDatabase()
     user_record = sql_db.get_user(username)
 
     if len(user_record) == 0:
