@@ -41,12 +41,35 @@ def login_form():
 # Register
 #-----------------------------------------------------------------------------
 
+#-----------------------------------------------------------------------------
+# Register
+#-----------------------------------------------------------------------------
+
 def register_form():
-    '''
-        register_form
-        Returns the view for the register_form
-    '''
     return page_view("register")
+
+
+def register_check(username, password):
+    
+    # generate the first salted then hashed password
+    salt = uuid.uuid4().hex
+
+    password_salt = salt + password
+    password_hash = hashlib.sha256(password_salt.encode()).hexdigest()
+
+    sql_db = sql.SQLDatabase('test.db')
+
+    record = sql_db.get_user(username)
+
+    if len(record) > 0:
+
+        return page_view("invalid", reason="User already exists")
+
+    else:
+
+        sql_db.add_user(username, password_hash, salt, admin=1)
+        sql_db.commit()
+        return page_view("valid", name=username)
 
 #-----------------------------------------------------------------------------
 
