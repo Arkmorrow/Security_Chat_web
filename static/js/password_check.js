@@ -3,18 +3,18 @@ var check = function() {
     if (document.getElementById('password').value ==
       document.getElementById('confirm_password').value) {
       document.getElementById('check_message').style.color = 'green';
-      document.getElementById('check_message').innerHTML = 'matching';
+      document.getElementById('check_message').innerHTML = 'Matching';
     } else {
       document.getElementById('check_message').style.color = 'red';
-      document.getElementById('check_message').innerHTML = 'not matching';
+      document.getElementById('check_message').innerHTML = 'Not Matching';
     }
   }
 
 //Check if the password and confirm_password is match
-function matchPassword() {  
+document.getElementById("register").addEventListener("click", function()  {  
 
     if(document.getElementById('password').value != document.getElementById('confirm_password').value)  
     {   
-      alert("Passwords did not match");  
+      alert("Passwords did not match");
     }
-  }  
+  }  );

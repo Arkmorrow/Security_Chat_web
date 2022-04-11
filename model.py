@@ -77,7 +77,7 @@ def login_check(username, password):
 #-----------------------------------------------------------------------------
 
 # Register a user account
-def register_account(username, password):
+def register_account(username, password, confirem_password):
     '''
         register_account
         Register a user account
@@ -88,6 +88,10 @@ def register_account(username, password):
 
         Returns either a view for valid register, or a view for invalid register
     '''
+
+    # Check if password is matches with confirem_password
+    if password != confirem_password:
+        return page_view("invalid", reason="Password and confirem_password is not Match")
 
     # Connect to the database
     sql_db = sql.SQLDatabase()

@@ -131,9 +131,10 @@ def post_register():
     # Handle the form processing
     username = request.forms.get('username')
     password = request.forms.get('password')
+    confirem_password = request.forms.get('confirm_password')
     
     # Call the appropriate method
-    return model.register_account(username, password)
+    return model.register_account(username, password, confirem_password)
 
 #-----------------------------------------------------------------------------
 
