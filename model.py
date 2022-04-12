@@ -87,6 +87,11 @@ def login_check(username, password):
     if len(user_record) == 0:
         return page_view("invalid", reason='username does not exist.')
 
+    # Do a attempts_check
+    check_attempts = sql_db.attempts_check(username)
+
+    if check_attempts == False:
+        return page_view("invalid", reason="You try too many times, Please try again after 5 minutes")
 
     db_username, db_password = user_record[0][0], user_record[0][1]
     salt = user_record[0][2]
@@ -99,7 +104,7 @@ def login_check(username, password):
 
     login = sql_db.check_credentials(username, password_hash)
     
-    if login == False: # Wrong password
+    if login == False: # Wrong password or too many attempts
         return page_view("invalid", reason="Incorrect Password")
 
     return page_view("valid", name=username)
