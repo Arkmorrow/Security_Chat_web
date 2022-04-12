@@ -109,7 +109,6 @@ def login_check(username, password):
 
     return page_view("valid", name=username)
 
-
 #-----------------------------------------------------------------------------
 
 # Register a user account
