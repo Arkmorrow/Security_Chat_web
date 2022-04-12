@@ -1,6 +1,7 @@
 import sqlite3
 import uuid
 import hashlib
+import bcrypt
 
 # This class is a simple handler for all of our SQL database actions
 # Practicing a good separation of concerns, we should only ever call 
@@ -75,7 +76,10 @@ class SQLDatabase():
         password_salt = salt + password
         password_hash = hashlib.sha256(password_salt.encode()).hexdigest()
 
-        sql_cmd = sql_cmd.format(username=username, password=password_hash, salt=salt, admin=admin)
+        # Hash the password
+        password_double_encrypted = bcrypt.hashpw(password_hash.encode('ascii'), bcrypt.gensalt()).hex()
+
+        sql_cmd = sql_cmd.format(username=username, password=password_double_encrypted, salt=salt, admin=admin)
 
         self.execute(sql_cmd)
         self.commit()
@@ -111,19 +115,23 @@ class SQLDatabase():
     # Check login credentials
     def check_credentials(self, username, password):
         sql_query = """
-                SELECT 1 
+                SELECT password
                 FROM Users
-                WHERE username = '{username}' AND password = '{password}'
+                WHERE username = '{username}'
             """
 
-        sql_query = sql_query.format(username=username, password=password)
+        sql_query = sql_query.format(username=username)
         self.execute(sql_query)
 
-        # If our query returns
-        if self.cur.fetchone():
+        # Get the return result
+        result = self.cur.fetchone()
+
+        # Check if the hash is same
+        if bcrypt.checkpw(password.encode('ascii'), bytes.fromhex(result[0])):
             return True
         else:
             return False
+
 
     #-----------------------------------------------------------------------------
 

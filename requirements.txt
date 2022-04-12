@@ -3,3 +3,4 @@ sqlite3
 gunicorn
 uuid
 hashlib
+bcrypt

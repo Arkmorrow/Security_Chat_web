@@ -95,20 +95,15 @@ def login_check(username, password):
     password_hash = hashlib.sha256(password_salt.encode()).hexdigest()
     
     if username != db_username: # Wrong Username
-        err_str = "Incorrect Username"
+        return page_view("invalid", reason="Incorrect Username")
 
-    # import pdb
-    # pdb.set_trace()
-    
-    if db_password != password_hash: # Wrong password
-        err_str = "Incorrect Password"
-        
     login = sql_db.check_credentials(username, password_hash)
+    
+    if login == False: # Wrong password
+        return page_view("invalid", reason="Incorrect Password")
 
-    if login: 
-        return page_view("valid", name=username)
-    else:
-        return page_view("invalid", reason=err_str)
+    return page_view("valid", name=username)
+
 
 #-----------------------------------------------------------------------------
 
