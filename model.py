@@ -11,6 +11,8 @@ import sql
 import uuid
 import hashlib
 
+from bottle import response
+
 
 # Initialise our views, all arguments are defaults for the template
 page_view = view.View()
@@ -107,7 +109,10 @@ def login_check(username, password):
     if login == False: # Wrong password or too many attempts
         return page_view("invalid", reason="Incorrect Password")
 
-    return page_view("valid", name=username)
+    #Setup a cookies when login in
+    response.set_cookie("account", username)
+
+    return page_view("friendlist")
 
 #-----------------------------------------------------------------------------
 
@@ -139,6 +144,22 @@ def register_account(username, password, confirem_password):
         #Store the password hashed by bcrypt with salt
         sql_db.add_user(username, password, 0)
         return page_view("valid", name=username)
+
+
+#-----------------------------------------------------------------------------
+# Friends list page with chat functions
+#-----------------------------------------------------------------------------
+
+def friendlist_form(username):
+    '''
+        about
+        Returns the view for the about page
+    '''
+    if username == None:
+        return page_view("invalid", reason="Please Login first")
+
+
+    return page_view("friendlist")
         
 #-----------------------------------------------------------------------------
 # About

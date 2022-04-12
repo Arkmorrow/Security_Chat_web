@@ -136,6 +136,23 @@ def post_register():
     # Call the appropriate method
     return model.register_account(username, password, confirem_password)
 
+
+#-----------------------------------------------------------------------------
+
+# Display the Chat with friends page
+@get('/friendlist')
+def get_login_controller():
+    '''
+        get_friendlist
+        
+        Serves the friendlist page
+    '''
+
+    #Get cookies
+    username = request.get_cookie("account")
+
+    return model.friendlist_form(username)
+
 #-----------------------------------------------------------------------------
 
 @get('/about')
