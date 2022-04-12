@@ -67,9 +67,7 @@ def manage_db():
     # Print the https domain, Please use this link to visit
     print("Please use this HTTPS Domain: https://localhost:8081")
 
-    print(sql_db.debug())
-    print(sql_db.check_credentials("admin","4270f1212c3e488fba21e4b6364e36b2"))
-    print(sql_db.debug())
+    #print(sql_db.debug())
     #print(sql_db.get_user('admin'))
 
     pass
