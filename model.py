@@ -112,7 +112,7 @@ def login_check(username, password):
     #Setup a cookies when login in
     response.set_cookie("account", username)
 
-    return page_view("friendlist")
+    return page_view("friendlist", name=username)
 
 #-----------------------------------------------------------------------------
 
@@ -150,7 +150,7 @@ def register_account(username, password, confirem_password):
 # Friends list page with chat functions
 #-----------------------------------------------------------------------------
 
-def friendlist_form(username):
+def friendlist_form(username, friend_username):
     '''
         about
         Returns the view for the about page
@@ -158,8 +158,51 @@ def friendlist_form(username):
     if username == None:
         return page_view("invalid", reason="Please Login first")
 
+    # Connect to the database
+    sql_db = sql.SQLDatabase()
 
-    return page_view("friendlist")
+    error_msg = ""
+
+    # Add friend_username
+    if friend_username != None:
+
+        if username == friend_username:
+            error_msg = "You can't input your username!"
+        else:
+            
+            #Check if the user is already be the friend of the giving username
+            if sql_db.check_friendlist(username, friend_username) != None:
+                error_msg = "You are already friends with the giving username!"
+            else:
+                add_state = sql_db.add_friend(username, friend_username)
+
+                if add_state:
+                    error_msg = "Successed add friend!"
+                else:
+                    error_msg = "The friend is not found!"
+
+    #Get friend list
+    friendlists = []
+    lists = sql_db.get_friendlist(username)
+
+    # Add friends to the list
+    if lists != None:
+        for data in lists:
+
+            if data[1] == username:
+                friendlists.append(data[2])
+            elif data[2] == username:
+                friendlists.append(data[1])
+
+    #Setup friend number msg
+    firends_num = ""
+
+    if len(friendlists) < 2:
+        firends_num += str(len(friendlists)) + " friend!"
+    else:
+        firends_num += str(len(friendlists)) + " friends!"
+
+    return page_view("friendlist",name=username, friend_num=firends_num, friendlists=friendlists,error_msg=error_msg)
         
 #-----------------------------------------------------------------------------
 # About

@@ -45,6 +45,7 @@ class SQLDatabase():
 
         # Clear the database if needed
         self.execute("DROP TABLE IF EXISTS Users")
+        self.execute("DROP TABLE IF EXISTS Friends")
         self.commit()
 
         # Create the users table
@@ -55,6 +56,13 @@ class SQLDatabase():
             admin INTEGER DEFAULT 0,
             attempts INTEGER DEFAULT 0,
             block_time DATETIME DEFAULT NULL
+        )""")
+
+         # Create the Firends table
+        self.execute("""CREATE TABLE Friends(
+            Id INTEGER PRIMARY KEY,
+            username TEXT,
+            friend TEXT
         )""")
 
         self.commit()
@@ -114,6 +122,16 @@ class SQLDatabase():
 
         return self.cur.fetchall()
     
+    def debug_friend(self):
+        sql_query = """
+                SELECT * 
+                FROM Friends
+            """
+            
+        self.execute(sql_query)
+        self.commit()
+
+        return self.cur.fetchall()
 
     # Check login credentials
     def check_credentials(self, username, password):
@@ -241,4 +259,59 @@ class SQLDatabase():
             return False
 
         return True
+
+    #-----------------------------------------------------------------------------
+
+    # Add a friend to a user
+    def add_friend(self, username ,friend):
+
+
+        # Check if the friend usernmae is exist
+        if len(self.get_user(friend)) == 0:
+            return False
+
+        sql_cmd = """
+                INSERT INTO Friends(username, friend)
+                VALUES('{username}', '{friend}')
+           """
+
+        sql_cmd = sql_cmd.format(username=username, friend=friend)
+
+        self.execute(sql_cmd)
+        self.commit()
+
+        return True
+
+
+    #-----------------------------------------------------------------------------
+
+    # Get a user friends list
+    def get_friendlist(self, username):
+
+        sql_query = """
+                SELECT * 
+                FROM Friends
+                WHERE username='{username}' or friend='{username}'
+            """
+        
+        sql_cmd = sql_query.format(username=username)
+        self.execute(sql_cmd)
+
+        return self.cur.fetchall()
+
+    #-----------------------------------------------------------------------------
+
+    # Check if two user is friends
+    def check_friendlist(self, username, friend_username):
+
+        sql_query = """
+                SELECT *
+                FROM Friends
+                WHERE (username = '{username}' and friend = '{friend_username}') or (username = '{friend_username}' and friend = '{username}')
+            """
+
+        sql_query = sql_query.format(username=username, friend_username=friend_username)
+        self.execute(sql_query)
+
+        return self.cur.fetchone()
          

@@ -122,10 +122,10 @@ def get_register_controller():
 @post('/register')
 def post_register():
     '''
-        post_register
+        post_friendlist
         
-        Handles register attempts
-        Expects a form containing 'username', 'password' and 'confirm_passowrd' fields
+        Handles add friend to user's friendlist
+        Expects a form containing 'add_friend' fields
     '''
 
     # Handle the form processing
@@ -139,9 +139,30 @@ def post_register():
 
 #-----------------------------------------------------------------------------
 
+# Add a friend
+@post('/friendlist')
+def post_friendlist():
+    '''
+        post_friendlist
+        
+        Handles add friend to user's friendlist
+        Expects a form containing 'add_friend' fields
+    '''
+
+    #Get cookies
+    username = request.get_cookie("account")
+
+    # Handle the form processing
+    friend_username = request.forms.get('add_friend')
+    
+    # Call the appropriate method
+    return model.friendlist_form(username, friend_username)
+
+#-----------------------------------------------------------------------------
+
 # Display the Chat with friends page
 @get('/friendlist')
-def get_login_controller():
+def get_friendlist():
     '''
         get_friendlist
         
@@ -151,7 +172,10 @@ def get_login_controller():
     #Get cookies
     username = request.get_cookie("account")
 
-    return model.friendlist_form(username)
+    return model.friendlist_form(username, None)
+
+
+
 
 #-----------------------------------------------------------------------------
 
