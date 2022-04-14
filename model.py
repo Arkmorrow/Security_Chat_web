@@ -112,7 +112,7 @@ def login_check(username, password):
     #Setup a cookies when login in
     response.set_cookie("account", username)
 
-    return page_view("friendlist", name=username)
+    return friendlist_form(username, None)
 
 #-----------------------------------------------------------------------------
 
