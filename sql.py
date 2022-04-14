@@ -46,6 +46,7 @@ class SQLDatabase():
         # Clear the database if needed
         self.execute("DROP TABLE IF EXISTS Users")
         self.execute("DROP TABLE IF EXISTS Friends")
+        self.execute("DROP TABLE IF EXISTS Messages")
         self.commit()
 
         # Create the users table
@@ -58,11 +59,19 @@ class SQLDatabase():
             block_time DATETIME DEFAULT NULL
         )""")
 
-         # Create the Firends table
+        # Create the Firends table
         self.execute("""CREATE TABLE Friends(
             Id INTEGER PRIMARY KEY,
             username TEXT,
             friend TEXT
+        )""")
+
+        # Create the Messages table to store encrypted messages
+        self.execute("""CREATE TABLE Messages(
+            Id INTEGER PRIMARY KEY,
+            sender_username TEXT,
+            receiver_username TEXT,
+            encrypted_messagge TEXT
         )""")
 
         self.commit()
