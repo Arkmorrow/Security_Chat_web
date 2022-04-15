@@ -88,16 +88,19 @@
 
 
 <div class="tab">
-    <h3>Friends</h3>
+    <h3>Click Friend you want to chat and see the updated message</h3>
+    <form action="/friendlist" method="post">
     %for friend in friendlists:
+      <input type="hidden" name="receiver" value={{friend}} />
       <button class="tablinks" onclick="openCity(event, '{{friend}}')">{{friend}}</button>
     %end
+    </form>
     
 </div>
 
 %for friend in friendlists:
 <div id="{{friend}}" class="tabcontent">
-    <h3>Chat History</h3>
+    <h3>Chat History with {{friend}}</h3>
 
     %for msg in messages:
       <div class="container">
