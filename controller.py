@@ -7,6 +7,11 @@
 from bottle import route, get, post, error, request, static_file
 
 import model
+import secrets
+
+#-----------------------------------------------------------------------------
+#Setup a secret key for cookies
+global_secret = secrets.token_hex(16)
 
 #-----------------------------------------------------------------------------
 # Static file paths
@@ -102,7 +107,41 @@ def post_login():
     password = request.forms.get('password')
     
     # Call the appropriate method
-    return model.login_check(username, password)
+    return model.login_check(username, password, global_secret)
+
+#-----------------------------------------------------------------------------
+
+# Display the logout page
+@get('/logout')
+def get_logout_controller():
+    '''
+        get_llogout
+        
+        Serves the logout page
+    '''
+
+    #Get cookies
+    username = request.get_cookie("account", secret=global_secret)
+
+    return model.logout_form(username)
+
+#-----------------------------------------------------------------------------
+
+# Attempt the register
+@post('/logout')
+def post_logout():
+    '''
+        post_logout
+        
+        Handles logout
+        Expects a form containing 'logout' fields
+    '''
+
+    #Get cookies
+    username = request.get_cookie("account", secret=global_secret)
+    
+    # Call the appropriate method
+    return model.logout_account(username, global_secret)
 
 #-----------------------------------------------------------------------------
 
@@ -150,9 +189,10 @@ def post_friendlist():
     '''
 
     #Get cookies
-    username = request.get_cookie("account")
+    username = request.get_cookie("account", secret=global_secret)
 
     # Handle the form processing
+    friend_username = request.forms.get('add_friend')
     friend_username = request.forms.get('add_friend')
     
     # Call the appropriate method
@@ -170,12 +210,9 @@ def get_friendlist():
     '''
 
     #Get cookies
-    username = request.get_cookie("account")
+    username = request.get_cookie("account", secret=global_secret)
 
     return model.friendlist_form(username, None)
-
-
-
 
 #-----------------------------------------------------------------------------
 

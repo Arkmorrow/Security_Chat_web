@@ -323,4 +323,38 @@ class SQLDatabase():
         self.execute(sql_query)
 
         return self.cur.fetchone()
+
+    #-----------------------------------------------------------------------------
+
+    # Add encrypted message to the database
+    def add_messages(self, sender_username, receiver_username, encrypted_messagge):
+
+        sql_cmd = """
+                INSERT INTO Messages(sender_username, receiver_username, encrypted_messagge)
+                VALUES('{sender_username}', '{receiver_username}', '{encrypted_messagge}')
+           """
+
+        sql_query = sql_query.format(sender_username=sender_username, receiver_username=receiver_username, encrypted_messagge=encrypted_messagge)
+        self.execute(sql_cmd)
+        self.commit()
+
+        return True
+
+
+    #-----------------------------------------------------------------------------
+
+    # Get encrypted message to the database between two user
+    def get_messages(self, username, friend_username):
+
+        sql_query = """
+                SELECT *
+                FROM Messages
+                WHERE (sender_username = '{username}' and receiver_username = '{friend_username}') or (sender_username = '{friend_username}' and receiver_username = '{username}')
+            """
+
+        sql_query = sql_query.format(username=username, friend_username=friend_username)
+        self.execute(sql_query)
+
+        return self.cur.fetchone()
+         
          

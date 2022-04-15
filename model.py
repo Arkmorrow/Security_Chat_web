@@ -35,28 +35,37 @@ def index():
 def register_form():
     return page_view("register")
 
+#-----------------------------------------------------------------------------
 
-def register_check(username, password):
-    
-    # generate the first salted then hashed password
-    salt = uuid.uuid4().hex
+# Register a user account
+def register_account(username, password, confirem_password):
+    '''
+        register_account
+        Register a user account
 
-    password_salt = salt + password
-    password_hash = hashlib.sha256(password_salt.encode()).hexdigest()
+        :: username :: The username
+        :: password :: The password
+        :: confirm password :: The confirm password that need to match
 
+        Returns either a view for valid register, or a view for invalid register
+    '''
+
+    # Check if password is matches with confirem_password
+    if password != confirem_password:
+        return page_view("invalid", reason="Password and confirem_password is not Match")
+
+    # Connect to the database
     sql_db = sql.SQLDatabase()
-
-    record = sql_db.get_user(username)
-
-    if len(record) > 0:
-
-        return page_view("invalid", reason="User already exists")
-
+    #sql_db.database_setup()
+    check_duplice = sql_db.check_username(username)
+        
+    if check_duplice: 
+        return page_view("invalid", reason="This Username is exist")
     else:
+        #Store the password hashed by bcrypt with salt
+        sql_db.add_user(username, password, 0)
+        return page_view("valid", name="Register successed ! " + username)
 
-        sql_db.add_user(username, password_hash, salt, admin=1)
-        sql_db.commit()
-        return page_view("valid", name=username)
 
 #-----------------------------------------------------------------------------
 
@@ -70,7 +79,7 @@ def login_form():
 #-----------------------------------------------------------------------------
 
 # Check the login credentials
-def login_check(username, password):
+def login_check(username, password, global_secret):
     '''
         login_check
         Checks usernames and passwords
@@ -110,41 +119,33 @@ def login_check(username, password):
         return page_view("invalid", reason="Incorrect Password")
 
     #Setup a cookies when login in
-    response.set_cookie("account", username)
+    response.set_cookie("account", username, secret=global_secret)
 
     return friendlist_form(username, None)
 
+
 #-----------------------------------------------------------------------------
 
-# Register a user account
-def register_account(username, password, confirem_password):
+def logout_form(username):
     '''
-        register_account
-        Register a user account
-
-        :: username :: The username
-        :: password :: The password
-        :: confirm password :: The confirm password that need to match
-
-        Returns either a view for valid register, or a view for invalid register
+        login_form
+        Returns the view for the login_form
     '''
+    #Check if the user is not login
+    if username == None:
+        return page_view("invalid", reason="Please Login first")
 
-    # Check if password is matches with confirem_password
-    if password != confirem_password:
-        return page_view("invalid", reason="Password and confirem_password is not Match")
+    
 
-    # Connect to the database
-    sql_db = sql.SQLDatabase()
-    #sql_db.database_setup()
-    check_duplice = sql_db.check_username(username)
-        
-    if check_duplice: 
-        return page_view("invalid", reason="This Username is exist")
-    else:
-        #Store the password hashed by bcrypt with salt
-        sql_db.add_user(username, password, 0)
-        return page_view("valid", name=username)
+    return page_view("logout")
 
+
+def logout_account(username, global_secret):
+
+    #Expires the cookies
+    response.set_cookie("account", username, expires=0, secret=global_secret)
+
+    return page_view("login")
 
 #-----------------------------------------------------------------------------
 # Friends list page with chat functions
@@ -155,6 +156,7 @@ def friendlist_form(username, friend_username):
         about
         Returns the view for the about page
     '''
+    #Check if the user is not login
     if username == None:
         return page_view("invalid", reason="Please Login first")
 
