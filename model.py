@@ -121,7 +121,7 @@ def login_check(username, password, global_secret):
     #Setup a cookies when login in
     response.set_cookie("account", username, secret=global_secret)
 
-    return friendlist_form(username, None)
+    return friendlist_form(username, None, None, None)
 
 
 #-----------------------------------------------------------------------------
@@ -134,8 +134,6 @@ def logout_form(username):
     #Check if the user is not login
     if username == None:
         return page_view("invalid", reason="Please Login first")
-
-    
 
     return page_view("logout")
 
@@ -151,7 +149,7 @@ def logout_account(username, global_secret):
 # Friends list page with chat functions
 #-----------------------------------------------------------------------------
 
-def friendlist_form(username, friend_username):
+def friendlist_form(username, friend_username, message, receiver):
     '''
         about
         Returns the view for the about page
@@ -166,22 +164,31 @@ def friendlist_form(username, friend_username):
     error_msg = ""
 
     # Add friend_username
-    if friend_username != None:
+    if friend_username != None and message != None:
+        error_msg = "Please given a input once at time ! You can't adding the friend and also sending a message"
+    else:
 
-        if username == friend_username:
-            error_msg = "You can't input your username!"
-        else:
-            
-            #Check if the user is already be the friend of the giving username
-            if sql_db.check_friendlist(username, friend_username) != None:
-                error_msg = "You are already friends with the giving username!"
+        if friend_username != None:
+
+            if username == friend_username:
+                error_msg = "You can't input your username!"
             else:
-                add_state = sql_db.add_friend(username, friend_username)
-
-                if add_state:
-                    error_msg = "Successed add friend!"
+                
+                #Check if the user is already be the friend of the giving username
+                if sql_db.check_friendlist(username, friend_username) != None:
+                    error_msg = "You are already friends with the giving username!"
                 else:
-                    error_msg = "The friend is not found!"
+                    add_state = sql_db.add_friend(username, friend_username)
+
+                    if add_state:
+                        error_msg = "Successed add friend!"
+                    else:
+                        error_msg = "The friend is not found!"
+        elif message != None:
+            
+            #Add message to the database
+            sql_db.add_messages(username, receiver, message)
+            error_msg = "Message sent!"
 
     #Get friend list
     friendlists = []
@@ -204,7 +211,17 @@ def friendlist_form(username, friend_username):
     else:
         firends_num += str(len(friendlists)) + " friends!"
 
-    return page_view("friendlist",name=username, friend_num=firends_num, friendlists=friendlists,error_msg=error_msg)
+    #Get messagelist
+    messagelists = []
+
+    temp_msg = sql_db.get_messages(username, receiver)
+    
+    if temp_msg != None:
+        for msg in temp_msg:
+
+            messagelists.append([msg[3], msg[1]])
+
+    return page_view("friendlist",name=username, friend_num=firends_num, friendlists=friendlists,messages=messagelists,error_msg=error_msg)
         
 #-----------------------------------------------------------------------------
 # About

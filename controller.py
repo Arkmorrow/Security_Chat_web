@@ -185,7 +185,7 @@ def post_friendlist():
         post_friendlist
         
         Handles add friend to user's friendlist
-        Expects a form containing 'add_friend' fields
+        Expects a form containing 'add_friend', 'messages' fields
     '''
 
     #Get cookies
@@ -193,10 +193,11 @@ def post_friendlist():
 
     # Handle the form processing
     friend_username = request.forms.get('add_friend')
-    friend_username = request.forms.get('add_friend')
+    messages = request.forms.get('messages')
+    receiver = request.forms.get("receiver")
     
     # Call the appropriate method
-    return model.friendlist_form(username, friend_username)
+    return model.friendlist_form(username, friend_username, messages, receiver)
 
 #-----------------------------------------------------------------------------
 
@@ -212,7 +213,7 @@ def get_friendlist():
     #Get cookies
     username = request.get_cookie("account", secret=global_secret)
 
-    return model.friendlist_form(username, None)
+    return model.friendlist_form(username, None, None, None)
 
 #-----------------------------------------------------------------------------
 

@@ -71,7 +71,7 @@
       color: #aaa;
     }
     
-    .time-left {
+    .name-left {
       float: left;
       color: #999;
     }
@@ -98,29 +98,18 @@
 %for friend in friendlists:
 <div id="{{friend}}" class="tabcontent">
     <h3>Chat History</h3>
-  <div class="container">
-  <p>Hello. How are you today?</p>
-  <span class="time-right">11:00</span>
-  </div>
 
-  <div class="container darker">
-    <p>Hey! I'm fine. Thanks for asking!</p>
-    <span class="time-left">11:01</span>
-  </div>
+    %for msg in messages:
+      <div class="container">
+      <p>{{msg[0]}}</p>
+      <span class="time-right">{{msg[1]}}</span>
+      </div>
+    %end
 
-  <div class="container">
-    <p>Sweet! So, what do you wanna do today?</p>
-    <span class="time-right">11:02</span>
-  </div>
-
-  <div class="container darker">
-    <p>Nah, I dunno. Play soccer.. or learn more coding perhaps?</p>
-    <span class="time-left">11:05</span>
-  </div>
-
-  <form action="/friendlist" method="post">
-    <p>Type a Message: <input name="messages" type="text"/><input value="Send" type="submit" /></p>
-  </form>
+    <form action="/friendlist" method="post">
+      <input type="hidden" name="receiver" value={{friend}} />
+      <p>Type a Message: <input name="messages" type="text"/><input value="Send" type="submit" /></p>
+    </form>
 
 </div>
 %end

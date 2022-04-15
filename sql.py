@@ -142,6 +142,17 @@ class SQLDatabase():
 
         return self.cur.fetchall()
 
+    def debug_message(self):
+        sql_query = """
+                SELECT * 
+                FROM Messages
+            """
+            
+        self.execute(sql_query)
+        self.commit()
+
+        return self.cur.fetchall()
+
     # Check login credentials
     def check_credentials(self, username, password):
         sql_query = """
@@ -319,8 +330,8 @@ class SQLDatabase():
                 WHERE (username = '{username}' and friend = '{friend_username}') or (username = '{friend_username}' and friend = '{username}')
             """
 
-        sql_query = sql_query.format(username=username, friend_username=friend_username)
-        self.execute(sql_query)
+        sql_cmd = sql_query.format(username=username, friend_username=friend_username)
+        self.execute(sql_cmd)
 
         return self.cur.fetchone()
 
@@ -329,12 +340,12 @@ class SQLDatabase():
     # Add encrypted message to the database
     def add_messages(self, sender_username, receiver_username, encrypted_messagge):
 
-        sql_cmd = """
+        sql_query = """
                 INSERT INTO Messages(sender_username, receiver_username, encrypted_messagge)
                 VALUES('{sender_username}', '{receiver_username}', '{encrypted_messagge}')
            """
 
-        sql_query = sql_query.format(sender_username=sender_username, receiver_username=receiver_username, encrypted_messagge=encrypted_messagge)
+        sql_cmd = sql_query.format(sender_username=sender_username, receiver_username=receiver_username, encrypted_messagge=encrypted_messagge)
         self.execute(sql_cmd)
         self.commit()
 
@@ -352,9 +363,9 @@ class SQLDatabase():
                 WHERE (sender_username = '{username}' and receiver_username = '{friend_username}') or (sender_username = '{friend_username}' and receiver_username = '{username}')
             """
 
-        sql_query = sql_query.format(username=username, friend_username=friend_username)
-        self.execute(sql_query)
+        sql_cmd = sql_query.format(username=username,friend_username=friend_username)
+        self.execute(sql_cmd)
 
-        return self.cur.fetchone()
+        return self.cur.fetchall()
          
          
