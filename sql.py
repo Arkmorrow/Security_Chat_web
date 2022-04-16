@@ -56,7 +56,9 @@ class SQLDatabase():
             salt TEXT,
             admin INTEGER DEFAULT 0,
             attempts INTEGER DEFAULT 0,
-            block_time DATETIME DEFAULT NULL
+            block_time DATETIME DEFAULT NULL,
+            public_key TEXT DEFAULT NULL
+            
         )""")
 
         # Create the Firends table
@@ -83,7 +85,7 @@ class SQLDatabase():
     # User handling
     #-----------------------------------------------------------------------------
 
-     # Add a user to the database
+    # Add a user to the database
     def add_user(self, username, password, admin):
         sql_cmd = """
                 INSERT INTO Users(username, password, salt, admin)
@@ -104,6 +106,37 @@ class SQLDatabase():
         self.execute(sql_cmd)
         self.commit()
         return True
+
+    # Add a public key to a user
+    def add_pk(self, username, public_key):
+
+        #Update the public key
+        sql_query = """
+            UPDATE Users
+            SET public_key = '{public_key}'
+            WHERE username = '{username}'
+        """
+
+        sql_cmd = sql_query.format(public_key=public_key,username=username)
+
+        self.execute(sql_cmd)
+        self.commit()
+        return True
+
+    # Get a public key for a user
+    def get_pk(self, username):
+
+        #Update the public key
+        sql_query = """
+                SELECT public_key
+                FROM Users
+                WHERE username = '{username}'
+            """
+
+        sql_cmd = sql_query.format(username=username)
+
+        self.execute(sql_cmd)
+        return self.cur.fetchall()
 
     #-----------------------------------------------------------------------------
 

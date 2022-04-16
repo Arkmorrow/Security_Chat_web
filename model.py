@@ -38,7 +38,7 @@ def register_form():
 #-----------------------------------------------------------------------------
 
 # Register a user account
-def register_account(username, password, confirem_password):
+def register_account(username, password, confirem_password, public_key):
     '''
         register_account
         Register a user account
@@ -64,6 +64,7 @@ def register_account(username, password, confirem_password):
     else:
         #Store the password hashed by bcrypt with salt
         sql_db.add_user(username, password, 0)
+        sql_db.add_pk(username,public_key)
         return page_view("valid", name="Register successed ! " + username)
 
 
@@ -199,9 +200,21 @@ def friendlist_form(username, friend_username, message, receiver):
         for data in lists:
 
             if data[1] == username:
-                friendlists.append(data[2])
+                public_key = sql_db.get_pk(data[2])
+
+                #check receiver
+                if data[2] == receiver:
+                    friendlists.append([data[2], public_key[0][0], 1])
+                else:
+                    friendlists.append([data[2], public_key[0][0], 0])
             elif data[2] == username:
-                friendlists.append(data[1])
+                public_key = sql_db.get_pk(data[1])
+
+                #check receiver
+                if data[1] == receiver:
+                    friendlists.append([data[1], public_key[0][0], 1])
+                else:
+                    friendlists.append([data[1], public_key[0][0], 0])
 
     #Setup friend number msg
     firends_num = ""

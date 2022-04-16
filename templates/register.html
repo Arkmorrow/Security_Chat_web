@@ -4,15 +4,17 @@ Register with a username and password
 
 <p>
 <form action="/register" method="post">
-    Username: <input name="username" type="text" />
+    Username: <input name="username" id="username" type="text" />
 </br>
     Password: <input name="password" id="password" type="password" required="required" onkeyup='check();'/>
 </br>
     Confirm Password: <input name="confirm_password" id="confirm_password" required="required" type="password" onkeyup='check();'/>
     <span id='check_message'></span>
 </br>
+    <input name="user_public_key" id="user_public_key_id" value="" type="hidden"/>
     <input value="Register" type="submit" id="register"/>
 </form>
 </p>
+<script src="../js/keygenerator.js"></script>
 <script src="../js/password_check.js"></script>
 </center>

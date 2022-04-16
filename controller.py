@@ -4,10 +4,11 @@
     maybe some simple program logic
 '''
 
-from bottle import route, get, post, error, request, static_file
+from bottle import route, get, post, error, request, static_file, response
 
 import model
 import secrets
+import json
 
 #-----------------------------------------------------------------------------
 #Setup a secret key for cookies
@@ -161,19 +162,20 @@ def get_register_controller():
 @post('/register')
 def post_register():
     '''
-        post_friendlist
+        post_register
         
-        Handles add friend to user's friendlist
-        Expects a form containing 'add_friend' fields
+        Handles register account
+        Expects a form containing 'username', 'password', 'confirm_password' and '' fields
     '''
 
     # Handle the form processing
     username = request.forms.get('username')
     password = request.forms.get('password')
     confirem_password = request.forms.get('confirm_password')
+    public_key = request.forms.get('user_public_key')
     
     # Call the appropriate method
-    return model.register_account(username, password, confirem_password)
+    return model.register_account(username, password, confirem_password, public_key)
 
 
 #-----------------------------------------------------------------------------
@@ -194,8 +196,8 @@ def post_friendlist():
     # Handle the form processing
     friend_username = request.forms.get('add_friend')
     messages = request.forms.get('messages')
-    receiver = request.forms.get("receiver")
-    
+    receiver = request.forms.get('receiver')
+
     # Call the appropriate method
     return model.friendlist_form(username, friend_username, messages, receiver)
 

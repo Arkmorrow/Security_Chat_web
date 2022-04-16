@@ -16,5 +16,9 @@ document.getElementById("register").addEventListener("click", function()  {
     if(document.getElementById('password').value != document.getElementById('confirm_password').value)  
     {   
       alert("Passwords did not match");
+    } else {
+      //Give the user public key to the server
+      localStorage.setItem(username, document.getElementById("user_public_key_id").value);
     }
   }  );
+

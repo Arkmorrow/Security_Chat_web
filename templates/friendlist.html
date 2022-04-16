@@ -9,7 +9,7 @@
       border: 1px solid #ccc;
       background-color: #f1f1f1;
       width: 30%;
-      height: auto;
+      height: 300px;
     }
     
     /* Style the buttons inside the tab */
@@ -44,7 +44,7 @@
       border: 1px solid #ccc;
       width: 70%;
       border-left: none;
-      height: auto;
+      height: 300px;
     }
     
     .container {
@@ -71,10 +71,6 @@
       color: #aaa;
     }
     
-    .name-left {
-      float: left;
-      color: #999;
-    }
     </style>
 </head>
 
@@ -90,31 +86,62 @@
 <div class="tab">
     <h3>Click Friend you want to chat and see the updated message</h3>
     <form action="/friendlist" method="post">
-    %for friend in friendlists:
-      <input type="hidden" name="receiver" value={{friend}} />
-      <button class="tablinks" onclick="openCity(event, '{{friend}}')">{{friend}}</button>
-    %end
+      <input id="receiver" type="hidden" name="receiver" value="" />
+      %for friend in friendlists:
+        %if friend[2] == 1:
+          <button class="tablinks" onclick="openFriend(event, '{{friend[0]}}')" id="CurrentOpen">{{friend[0]}}</button>
+        %end
+        %if friend[2] == 0:
+          <button class="tablinks" onclick="openFriend(event, '{{friend[0]}}')" >{{friend[0]}} </button>
+        %end
+        
+      %end
     </form>
     
 </div>
 
 %for friend in friendlists:
-<div id="{{friend}}" class="tabcontent">
-    <h3>Chat History with {{friend}}</h3>
 
-    %for msg in messages:
-      <div class="container">
-      <p>{{msg[0]}}</p>
-      <span class="time-right">{{msg[1]}}</span>
-      </div>
-    %end
+  %if friend[2] == 1:
+    <div id="{{friend[0]}}" class="tabcontent" name="yes">
+      <h3>Chat History with {{friend[0]}}</h3>
 
-    <form action="/friendlist" method="post">
-      <input type="hidden" name="receiver" value={{friend}} />
-      <p>Type a Message: <input name="messages" type="text"/><input value="Send" type="submit" /></p>
-    </form>
+      <p id="receiver_pk">{{friend[1]}}</p>
 
-</div>
+      %for msg in messages:
+        <div class="container">
+        <p>{{msg[0]}}</p>
+        <span class="time-right">{{msg[1]}}</span>
+        </div>
+      %end
+
+      <form action="/friendlist" method="post">
+        <input id="username" type="hidden" name="receiver" value={{friend[0]}} />
+        <p>Type a Message: <input name="messages" type="text"/><input value="Send" type="submit" /></p>
+      </form>
+
+    </div>
+  %end
+  %if friend[2] == 0:
+    <div id="{{friend[0]}}" class="tabcontent" name="no" style="display: none;">
+      <h3>Chat History with {{friend[0]}}</h3>
+
+      <p id="receiver_pk">{{friend[1]}}</p>
+
+      %for msg in messages:
+        <div class="container">
+        <p>{{msg[0]}}</p>
+        <span class="time-right">{{msg[1]}}</span>
+        </div>
+      %end
+
+      <form action="/friendlist" method="post">
+        <input id="username" type="hidden" name="receiver" value={{friend[0]}} />
+        <p>Type a Message: <input name="messages" type="text"/><input value="Send" type="submit" /></p>
+      </form>
+
+    </div>
+  %end
 %end
 
 </p>
