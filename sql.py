@@ -54,7 +54,7 @@ class SQLDatabase():
             username TEXT UNIQUE,
             password TEXT,
             salt TEXT,
-            admin INTEGER DEFAULT 0,
+            admin TEXT DEFAULT 'NO',
             attempts INTEGER DEFAULT 0,
             block_time DATETIME DEFAULT NULL,
             public_key TEXT DEFAULT NULL
@@ -79,7 +79,7 @@ class SQLDatabase():
         self.commit()
 
         # Add our admin user
-        self.add_user('admin', admin_password, admin=1)
+        self.add_user('admin', admin_password, admin='YES')
 
     #-----------------------------------------------------------------------------
     # User handling
@@ -89,7 +89,7 @@ class SQLDatabase():
     def add_user(self, username, password, admin):
         sql_cmd = """
                 INSERT INTO Users(username, password, salt, admin)
-                VALUES('{username}', '{password}', '{salt}', {admin})
+                VALUES('{username}', '{password}', '{salt}', '{admin}')
            """
 
         # Generate a random number as salt.
