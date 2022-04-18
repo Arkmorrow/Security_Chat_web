@@ -17,6 +17,8 @@ document.getElementById("register").addEventListener("click", function()  {
     {   
       alert("Passwords did not match");
     }
+
+    //Save the secret key to the localStorage
     var username = document.getElementById('username').value;
     localStorage.setItem(username, document.getElementById('user_private_key_id').value);
     
