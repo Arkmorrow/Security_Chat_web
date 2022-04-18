@@ -63,7 +63,7 @@ def register_account(username, password, confirem_password, public_key):
         return page_view("invalid", reason="This Username is exist")
     else:
         #Store the password hashed by bcrypt with salt
-        sql_db.add_user(username, password, 0)
+        sql_db.add_user(username, password, 'NO')
         sql_db.add_pk(username,public_key)
         return page_view("valid", name="Register successed ! " + username)
 
@@ -195,26 +195,30 @@ def friendlist_form(username, friend_username, message, receiver):
     friendlists = []
     lists = sql_db.get_friendlist(username)
 
+    #Get public key for current user
+    public_key_current_user = sql_db.get_pk(username)
+
     # Add friends to the list
     if lists != None:
         for data in lists:
 
             if data[1] == username:
                 public_key = sql_db.get_pk(data[2])
+                public_key_current_user = sql_db.get_pk(data[1])
 
                 #check receiver
                 if data[2] == receiver:
-                    friendlists.append([data[2], public_key[0][0], 1])
+                    friendlists.append([data[2], public_key[0][0], 1, public_key_current_user[0][0]])
                 else:
-                    friendlists.append([data[2], public_key[0][0], 0])
+                    friendlists.append([data[2], public_key[0][0], 0, public_key_current_user[0][0]])
             elif data[2] == username:
                 public_key = sql_db.get_pk(data[1])
 
                 #check receiver
                 if data[1] == receiver:
-                    friendlists.append([data[1], public_key[0][0], 1])
+                    friendlists.append([data[1], public_key[0][0], 1, public_key_current_user[0][0]])
                 else:
-                    friendlists.append([data[1], public_key[0][0], 0])
+                    friendlists.append([data[1], public_key[0][0], 0, public_key_current_user[0][0]])
 
     #Setup friend number msg
     firends_num = ""

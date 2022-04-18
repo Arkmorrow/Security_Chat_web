@@ -195,7 +195,7 @@ def post_friendlist():
 
     # Handle the form processing
     friend_username = request.forms.get('add_friend')
-    messages = request.forms.get('messages')
+    messages = request.forms.get('msg_encrypted')
     receiver = request.forms.get('receiver')
 
     # Call the appropriate method

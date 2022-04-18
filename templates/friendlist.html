@@ -9,7 +9,7 @@
       border: 1px solid #ccc;
       background-color: #f1f1f1;
       width: 30%;
-      height: 300px;
+      height: auto;
     }
     
     /* Style the buttons inside the tab */
@@ -44,7 +44,7 @@
       border: 1px solid #ccc;
       width: 70%;
       border-left: none;
-      height: 300px;
+      height: auto;
     }
     
     .container {
@@ -75,7 +75,7 @@
 </head>
 
 <h2>Chat with your friends</h2>
-<p>Here is your friendlist, <strong>{{name}} </strong></p>
+<p>Here is your friendlist, <strong id="current_user_name">{{name}}</strong></p>
 <p>You currently have {{friend_num}}</p>
 <form action="/friendlist" method="post">
 <p>Type a username to Add a Friend: <input name="add_friend" type="text"/><input value="Add" type="submit" /></p>
@@ -89,10 +89,10 @@
       <input id="receiver" type="hidden" name="receiver" value="" />
       %for friend in friendlists:
         %if friend[2] == 1:
-          <button class="tablinks" onclick="openFriend(event, '{{friend[0]}}')" id="CurrentOpen">{{friend[0]}}</button>
+          <button class="tablinks active" onclick="openFriend('{{friend[0]}}')" id="CurrentOpen">{{friend[0]}}</button>
         %end
         %if friend[2] == 0:
-          <button class="tablinks" onclick="openFriend(event, '{{friend[0]}}')" >{{friend[0]}} </button>
+          <button class="tablinks" onclick="openFriend('{{friend[0]}}')" >{{friend[0]}} </button>
         %end
         
       %end
@@ -106,18 +106,20 @@
     <div id="{{friend[0]}}" class="tabcontent" name="yes">
       <h3>Chat History with {{friend[0]}}</h3>
 
-      <p id="receiver_pk">{{friend[1]}}</p>
+      <input class="receiver_pk" id="receiver_pk" type="hidden" value='{{friend[1]}}'/>
+      <input class="current_user_pk" id="current_user_pk" type="hidden" value='{{friend[3]}}'/>
 
       %for msg in messages:
         <div class="container">
-        <p>{{msg[0]}}</p>
+        <p class="msg_need_changed" id="msg_need_changed">{{msg[0]}}</p>
         <span class="time-right">{{msg[1]}}</span>
         </div>
       %end
 
       <form action="/friendlist" method="post">
         <input id="username" type="hidden" name="receiver" value={{friend[0]}} />
-        <p>Type a Message: <input name="messages" type="text"/><input value="Send" type="submit" /></p>
+        <input id="msg_encrypted" type="hidden" class="msg_encrypted" name="msg_encrypted" value="">
+        <p>Type a Message: <input name="messages" class="messages" id="messages" type="text" onkeyup="encrypt_msg('{{friend[0]}}','{{friend[1]}}')"/><input value="Send" type="submit"/></p>
       </form>
 
     </div>
@@ -126,18 +128,20 @@
     <div id="{{friend[0]}}" class="tabcontent" name="no" style="display: none;">
       <h3>Chat History with {{friend[0]}}</h3>
 
-      <p id="receiver_pk">{{friend[1]}}</p>
+      <input class="receiver_pk" id="receiver_pk" type="hidden" value='{{friend[1]}}'/>
+      <input class="current_user_pk" id="current_user_pk" type="hidden" value='{{friend[3]}}'/>
 
       %for msg in messages:
         <div class="container">
-        <p>{{msg[0]}}</p>
+        <p class="msg_need_changed" id="msg_need_changed">{{msg[0]}}</p>
         <span class="time-right">{{msg[1]}}</span>
         </div>
       %end
 
       <form action="/friendlist" method="post">
         <input id="username" type="hidden" name="receiver" value={{friend[0]}} />
-        <p>Type a Message: <input name="messages" type="text"/><input value="Send" type="submit" /></p>
+        <input id="msg_encrypted" type="hidden" class="msg_encrypted" name="msg_encrypted" value="">
+        <p>Type a Message: <input name="messages" type="text" id="messages" onkeyup="encrypt_msg('{{friend[0]}}','{{friend[1]}}')"/><input value="Send" type="submit" /></p>
       </form>
 
     </div>
@@ -147,3 +151,5 @@
 </p>
 
 <script src="../js/friendlist.js"></script>
+<script src="../js/encrypt_decrypt_msg.js"></script>
+
