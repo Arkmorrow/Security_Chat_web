@@ -37,11 +37,9 @@ async function encrypts_msg(username, iv, messages_need) {
     //get current user private key from localStorage
     const current_sekey = await crypto.subtle.importKey("jwk", JSON.parse(localStorage.getItem(username)), {name:"ECDH", namedCurve: "P-256"}, true, ["deriveKey"])
     
-
     // Get the shared key
     const encrypt_key = await deriveSecretKey(current_sekey, receiver_pubkey);
     
-
     let enc = new TextEncoder();
 
     var encoded = enc.encode(messages_need);
@@ -67,10 +65,8 @@ async function decrypt_msg(message, iv) {
   //get current user private key from localStorage
   const current_sekey = await crypto.subtle.importKey("jwk", JSON.parse(localStorage.getItem(current_user)), {name:"ECDH", namedCurve: "P-256"}, true, ["deriveKey"])
   
-
   // Get the shared key
   const encrypt_key = await deriveSecretKey(current_sekey, receiver_pubkey);
-
 
   return await window.crypto.subtle.decrypt(
       {
@@ -103,6 +99,7 @@ function encrypt_msg(username, pub_key) {
     });  
 }
 
+//Get the receiver's username
 var username = document.getElementById("CurrentOpen")
 
 if (username != null) {
@@ -110,33 +107,35 @@ if (username != null) {
 }
 
 var temp_tab = document.getElementById(username)
+
+//Get the current login username
 var current_user = document.getElementById("current_user_name").innerHTML
 
 if (temp_tab != null) {
   if (temp_tab.getElementsByClassName("receiver_pk") != null && temp_tab.getElementsByClassName("current_user_pk") != null) {
-
+    
+    //Get current reciver's public key
     var receiver_pk = temp_tab.getElementsByClassName("receiver_pk")[0].value
-    var current_user_pk = temp_tab.getElementsByClassName("current_user_pk")[0].value
     localStorage.setItem("receiver_pk",receiver_pk);
-    localStorage.setItem("current_user_pk",current_user_pk);
     
-    
+    //Get all messages history and decrypt it
     if (temp_tab != null) {
       var temp = temp_tab.getElementsByClassName("msg_need_changed")
       
       if (temp != null) {
         
         for (let i = 0; i < temp.length; i++) {
+
+          //Get encrypt messages and iv
           var encrypt_info = JSON.parse(temp[i].innerHTML)
-    
           var iv = encrypt_info["iv"]
-    
           var iv_rest = convertBase64ToArrayBuffer(iv)
           var encrypt_key = encrypt_info["encrypt_key"]
-    
           var ret = convertBase64ToArrayBuffer(encrypt_key)
     
           var decrypt_msgs = decrypt_msg(ret, iv_rest)
+
+          //Show the decrypt_msgs
           var enc = new TextDecoder();
           decrypt_msgs.then((val) => {temp[i].innerHTML = enc.decode(val)})
           .catch(function(err){
