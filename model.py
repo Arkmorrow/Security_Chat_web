@@ -239,7 +239,18 @@ def friendlist_form(username, friend_username, message, receiver):
             messagelists.append([msg[3], msg[1]])
 
     return page_view("friendlist",name=username, friend_num=firends_num, friendlists=friendlists,messages=messagelists,error_msg=error_msg)
-        
+
+#-----------------------------------------------------------------------------
+
+def forum_form():
+    '''
+        forum_form
+        Returns the view for the forum_form
+    '''
+    return page_view("forum")
+
+
+
 #-----------------------------------------------------------------------------
 # About
 #-----------------------------------------------------------------------------

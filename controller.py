@@ -219,6 +219,18 @@ def get_friendlist():
 
 #-----------------------------------------------------------------------------
 
+# Display the forum page
+@get('/forum')
+def get_forum_controller():
+    '''
+        get_forum
+        
+        Serves the forum page
+    '''
+    return model.forum_form()
+
+#-----------------------------------------------------------------------------
+
 @get('/about')
 def get_about():
     '''
