@@ -251,11 +251,16 @@ def forum_form():
 
 #-----------------------------------------------------------------------------
 
-def rescources_form():
+def rescources_form(username):
     '''
         rescources_form
         Returns the view for the rescources_form
     '''
+
+    #Check if the user is not login
+    if username == None:
+        return page_view("invalid", reason="Please Login first")
+    
     return page_view("rescources")
 
 #-----------------------------------------------------------------------------

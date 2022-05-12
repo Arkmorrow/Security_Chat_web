@@ -239,7 +239,11 @@ def get_rescources_controller():
         
         Serves the rescources page
     '''
-    return model.rescources_form()
+
+    #Get cookies
+    username = request.get_cookie("account", secret=global_secret)
+
+    return model.rescources_form(username)
 
 #-----------------------------------------------------------------------------
 
