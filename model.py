@@ -249,7 +249,14 @@ def forum_form():
     '''
     return page_view("forum")
 
+#-----------------------------------------------------------------------------
 
+def rescources_form():
+    '''
+        rescources_form
+        Returns the view for the rescources_form
+    '''
+    return page_view("rescources")
 
 #-----------------------------------------------------------------------------
 # About

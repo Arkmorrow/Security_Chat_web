@@ -231,6 +231,18 @@ def get_forum_controller():
 
 #-----------------------------------------------------------------------------
 
+# Display the rescources page
+@get('/rescources')
+def get_rescources_controller():
+    '''
+        get_rescources
+        
+        Serves the rescources page
+    '''
+    return model.rescources_form()
+
+#-----------------------------------------------------------------------------
+
 @get('/about')
 def get_about():
     '''
