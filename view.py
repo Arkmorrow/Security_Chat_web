@@ -1,11 +1,12 @@
-#-----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # This class loads html files from the "template" directory and formats them using Python.
 # You can find a fuller explanation for this file in the README file
-#-----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 import string
 
 from bottle import SimpleTemplate
+
 
 class View():
     '''
@@ -17,21 +18,20 @@ class View():
         To display different headers when logged in, be sure to replace the
         header keyword argument when calling the function from model
     '''
-    def __init__(self, 
-        template_path="templates/",  # Path to template files
-        template_extension=".html",  # Extension of templates, self can be overridden
-        **kwargs): # Used to pass any global format arguments
+
+    def __init__(self,
+                 template_path="templates/",  # Path to template files
+                 template_extension=".html",  # Extension of templates, self can be overridden
+                 **kwargs):  # Used to pass any global format arguments
         self.template_path = template_path
         self.template_extension = template_extension
         self.global_renders = kwargs
-
 
     def __call__(self, *args, **kwargs):
         '''
             Call defaults to load and render
         '''
         return self.load_and_render(*args, **kwargs)
-
 
     def load_and_render(self, filename, header="header", tailer="tailer", **kwargs):
         ''' 
@@ -47,13 +47,12 @@ class View():
         tailer_template = self.load_template(tailer)
 
         rendered_template = self.render(
-            body_template=body_template, 
-            header_template=header_template, 
-            tailer_template=tailer_template, 
+            body_template=body_template,
+            header_template=header_template,
+            tailer_template=tailer_template,
             **kwargs)
 
         return rendered_template
-
 
     def load_template(self, filename):
         '''
@@ -67,10 +66,9 @@ class View():
         file = open(path, 'r')
         text = ""
         for line in file:
-            text+= line
+            text += line
         file.close()
         return text
-
 
     def render(self, body_template, header_template, tailer_template, **kwargs):
         ''' 
@@ -94,7 +92,6 @@ class View():
         # Return the template
         return rendered_template
 
-
     def simple_render(self, template, **kwargs):
         '''
             simple_render 
@@ -107,8 +104,7 @@ class View():
         # template = template.safe_substitute(**kwargs)
         template = SimpleTemplate(template)
         template = template.render(**kwargs)
-        return  template
-
+        return template
 
     def global_render(self, template):
         '''
