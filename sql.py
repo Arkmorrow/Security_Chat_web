@@ -57,7 +57,8 @@ class SQLDatabase():
             admin TEXT DEFAULT 'NO',
             attempts INTEGER DEFAULT 0,
             block_time DATETIME DEFAULT NULL,
-            public_key TEXT DEFAULT NULL
+            public_key TEXT DEFAULT NULL,
+            mute TEXT DEFAULT 'NO'
             
         )""")
 
@@ -74,6 +75,13 @@ class SQLDatabase():
             sender_username TEXT,
             receiver_username TEXT,
             encrypted_messagge TEXT
+        )""")
+
+        # Create the post table
+        self.execute("""CREATE TABLE Posts(
+            Id INTEGER PRIMARY KEY,
+            from_username TEXT,
+            post_detail TEXT
         )""")
 
         self.commit()

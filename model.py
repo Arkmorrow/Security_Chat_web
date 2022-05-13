@@ -246,11 +246,15 @@ def friendlist_form(username, friend_username, message, receiver):
 
 # -----------------------------------------------------------------------------
 
-def forum_form():
+def forum_form(username):
     '''
         forum_form
         Returns the view for the forum_form
     '''
+    # Check if the user is not login
+    if username == None:
+        return page_view("invalid", reason="Please Login first")
+        
     return page_view("forum")
 
 

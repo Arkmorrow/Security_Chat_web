@@ -227,19 +227,31 @@ def get_forum_controller():
         
         Serves the forum page
     '''
-    return model.forum_form()
 
+    #Get cookies
+    username = request.get_cookie("account", secret=global_secret)
 
-# Display the forum page
+    return model.forum_form(username)
+
+#-----------------------------------------------------------------------------
+
+# Add a friend
 @post('/forum')
-def get_forum_controller():
+def post_forum():
     '''
-        get_forum
-
-        Serves the forum page
+        post_forum
+        
+        Handles post forum
     '''
-    return model.forum_form()
 
+    #Get cookies
+    username = request.get_cookie("account", secret=global_secret)
+
+    # Handle the form processing
+    post_message = request.forms.get('add_friend')
+
+    # Call the appropriate method
+    return model.forum_form(username)
 
 #-----------------------------------------------------------------------------
 
