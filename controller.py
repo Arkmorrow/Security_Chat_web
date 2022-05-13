@@ -254,7 +254,17 @@ def get_forum_controller():
     return model.forum_form()
 
 
-# -----------------------------------------------------------------------------
+# Display the forum page
+@post('/forum')
+def get_forum_controller():
+    '''
+        get_forum
+
+        Serves the forum page
+    '''
+    return model.forum_form()
+
+
 # Display the post page
 @get('/forum')
 def get_forum_controller():
