@@ -17,6 +17,14 @@ from bottle import response
 page_view = view.View()
 
 
+def is_admin(username):
+    if not username:
+        return False
+    sql_db = sql.SQLDatabase()
+    user_record = sql_db.get_user(username)
+    return user_record[0][3] == 'YES'
+
+
 # -----------------------------------------------------------------------------
 # Index
 # -----------------------------------------------------------------------------
@@ -253,14 +261,25 @@ def forum_form(username):
     '''
     if not username:
         return page_view("invalid", reason="Please Login first")
+    return page_view("forum", is_admin=is_admin(username))
+
+
+def add_post(username, title, content, section):
     sql_db = sql.SQLDatabase()
-    user_record = sql_db.get_user(username)
-    return page_view("forum", is_admin=user_record[0][3] == 'YES')
+    sql_db.add_post(title, content, username, section)
+    return page_view("postlist")
 
 
 # -----------------------------------------------------------------------------
 def post_page(username):
-    return page_view("postlist")
+    sql_db = sql.SQLDatabase()
+    posts = sql_db.get_post_list()
+    admin = is_admin(username)
+    posts = [list(p) for p in posts]
+    for p in posts:
+        sender = p[4]
+        p.append(admin or sender == username)
+    return page_view("postlist", is_admin=is_admin(username), posts=posts)
 
 
 # -----------------------------------------------------------------------------

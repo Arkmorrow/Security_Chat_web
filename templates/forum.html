@@ -9,12 +9,12 @@
 
         <div>
             Section:
-            <select>
-                <option>general</option>
-                <option>tech issue</option>
+            <select name="section">
+                <option selected value="general">general</option>
+                <option value="tech issue">tech issue</option>
 
                 % if is_admin:
-                <option>admin</option>
+                <option value="admin">admin</option>
                 % end
 
             </select>
@@ -22,25 +22,19 @@
         <br>
         <div>
             Title* :
-            <input placeholder="Title"/>
+            <input required name="title" placeholder="Title"/>
         </div>
 
         <br>
         <div>
             Content* :<br>
-            <textarea rows="5" cols="30"></textarea>
+            <textarea required name="content" rows="5" cols="30"></textarea>
         </div>
         <br>
         <button>POST</button>
     </form>
 </center>
-         <br>
-        <div>
-            Content* :<br>
-            <textarea rows="5"  cols="30"></textarea>
-        </div>
-         <br>
-        <button>POST</button>
+
     </form>
 </center>
 </p>

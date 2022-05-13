@@ -92,6 +92,9 @@ class SQLDatabase():
         # Add our admin user
         self.add_user('admin', admin_password, admin='YES')
         self.add_user('root', '321.qwer', admin='NO')
+        self.add_post("what's your name? ",
+                      'Welcome to USPS.com. Find information on our most convenient and affordable shipping and mailing services. Use our quick tools to find locations, ...',
+                      'root', 'general')
 
     # -----------------------------------------------------------------------------
     # User handling

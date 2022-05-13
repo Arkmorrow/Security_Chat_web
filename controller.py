@@ -250,19 +250,11 @@ def get_forum_controller():
 
         Serves the forum page
     '''
-    pass
-    return model.forum_form()
-
-
-# Display the forum page
-@post('/forum')
-def get_forum_controller():
-    '''
-        get_forum
-
-        Serves the forum page
-    '''
-    return model.forum_form()
+    username = request.get_cookie("account", secret=global_secret)
+    title = request.forms.get('title')
+    content = request.forms.get('content')
+    section = request.forms.get('section')
+    return model.add_post(username, title, content, section)
 
 
 # -----------------------------------------------------------------------------
