@@ -19,7 +19,22 @@ footer {
 .post-item {
     border: 1px solid darkgray;
     padding: 10px;
-    margin: 10px 0;
+    width: 100%;
+    margin-bottom: 40px;
+}
+
+.justify-content-end {
+    justify-content: flex-end;
+}
+
+.comment h4 {
+    border-bottom: 1px solid darkgray;
+    margin-bottom: 10px;
+    padding-bottom: 5px;
+}
+
+.comment-item {
+
 }
 
 .post-nav {
@@ -34,11 +49,19 @@ footer {
     border: none;
     cursor: pointer;
     padding: 10px 25px;
-    margin-right:15px;
+    margin-right: 15px;
 }
 
 .color-title {
     color: #17233d
+}
+
+.color-user {
+    color: #2d8cf0
+}
+
+.color-user-2 {
+    color: #5cadff
 }
 
 .d-flex {
