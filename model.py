@@ -13,13 +13,13 @@ import hashlib
 
 from bottle import response
 
-
 # Initialise our views, all arguments are defaults for the template
 page_view = view.View()
 
-#-----------------------------------------------------------------------------
+
+# -----------------------------------------------------------------------------
 # Index
-#-----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 def index():
     '''
@@ -28,14 +28,16 @@ def index():
     '''
     return page_view("index")
 
-#-----------------------------------------------------------------------------
+
+# -----------------------------------------------------------------------------
 # Register
-#-----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 def register_form():
     return page_view("register")
 
-#-----------------------------------------------------------------------------
+
+# -----------------------------------------------------------------------------
 
 # Register a user account
 def register_account(username, password, confirem_password, public_key):
@@ -56,19 +58,19 @@ def register_account(username, password, confirem_password, public_key):
 
     # Connect to the database
     sql_db = sql.SQLDatabase()
-    #sql_db.database_setup()
+    # sql_db.database_setup()
     check_duplice = sql_db.check_username(username)
-        
-    if check_duplice: 
+
+    if check_duplice:
         return page_view("invalid", reason="This Username is exist")
     else:
-        #Store the password hashed by bcrypt with salt
+        # Store the password hashed by bcrypt with salt
         sql_db.add_user(username, password, 'NO')
-        sql_db.add_pk(username,public_key)
+        sql_db.add_pk(username, public_key)
         return page_view("valid", name="Register successed ! " + username)
 
 
-#-----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 def login_form():
     '''
@@ -77,7 +79,8 @@ def login_form():
     '''
     return page_view("login")
 
-#-----------------------------------------------------------------------------
+
+# -----------------------------------------------------------------------------
 
 # Check the login credentials
 def login_check(username, password, global_secret):
@@ -110,29 +113,29 @@ def login_check(username, password, global_secret):
 
     password_salt = salt + password
     password_hash = hashlib.sha256(password_salt.encode()).hexdigest()
-    
-    if username != db_username: # Wrong Username
+
+    if username != db_username:  # Wrong Username
         return page_view("invalid", reason="Incorrect Username")
 
     login = sql_db.check_credentials(username, password_hash)
-    
-    if login == False: # Wrong password or too many attempts
+
+    if login == False:  # Wrong password or too many attempts
         return page_view("invalid", reason="Incorrect Password")
 
-    #Setup a cookies when login in
+    # Setup a cookies when login in
     response.set_cookie("account", username, secret=global_secret)
 
     return friendlist_form(username, None, None, None)
 
 
-#-----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 def logout_form(username):
     '''
         login_form
         Returns the view for the login_form
     '''
-    #Check if the user is not login
+    # Check if the user is not login
     if username == None:
         return page_view("invalid", reason="Please Login first")
 
@@ -140,22 +143,22 @@ def logout_form(username):
 
 
 def logout_account(username, global_secret):
-
-    #Expires the cookies
+    # Expires the cookies
     response.set_cookie("account", username, expires=0, secret=global_secret)
 
     return page_view("login")
 
-#-----------------------------------------------------------------------------
+
+# -----------------------------------------------------------------------------
 # Friends list page with chat functions
-#-----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 def friendlist_form(username, friend_username, message, receiver):
     '''
         about
         Returns the view for the about page
     '''
-    #Check if the user is not login
+    # Check if the user is not login
     if username == None:
         return page_view("invalid", reason="Please Login first")
 
@@ -174,8 +177,8 @@ def friendlist_form(username, friend_username, message, receiver):
             if username == friend_username:
                 error_msg = "You can't input your username!"
             else:
-                
-                #Check if the user is already be the friend of the giving username
+
+                # Check if the user is already be the friend of the giving username
                 if sql_db.check_friendlist(username, friend_username) != None:
                     error_msg = "You are already friends with the giving username!"
                 else:
@@ -186,16 +189,16 @@ def friendlist_form(username, friend_username, message, receiver):
                     else:
                         error_msg = "The friend is not found!"
         elif message != None:
-            
-            #Add message to the database
+
+            # Add message to the database
             sql_db.add_messages(username, receiver, message)
             error_msg = "Message sent!"
 
-    #Get friend list
+    # Get friend list
     friendlists = []
     lists = sql_db.get_friendlist(username)
 
-    #Get public key for current user
+    # Get public key for current user
     public_key_current_user = sql_db.get_pk(username)
 
     # Add friends to the list
@@ -206,7 +209,7 @@ def friendlist_form(username, friend_username, message, receiver):
                 public_key = sql_db.get_pk(data[2])
                 public_key_current_user = sql_db.get_pk(data[1])
 
-                #check receiver
+                # check receiver
                 if data[2] == receiver:
                     friendlists.append([data[2], public_key[0][0], 1, public_key_current_user[0][0]])
                 else:
@@ -214,13 +217,13 @@ def friendlist_form(username, friend_username, message, receiver):
             elif data[2] == username:
                 public_key = sql_db.get_pk(data[1])
 
-                #check receiver
+                # check receiver
                 if data[1] == receiver:
                     friendlists.append([data[1], public_key[0][0], 1, public_key_current_user[0][0]])
                 else:
                     friendlists.append([data[1], public_key[0][0], 0, public_key_current_user[0][0]])
 
-    #Setup friend number msg
+    # Setup friend number msg
     firends_num = ""
 
     if len(friendlists) < 2:
@@ -228,19 +231,20 @@ def friendlist_form(username, friend_username, message, receiver):
     else:
         firends_num += str(len(friendlists)) + " friends!"
 
-    #Get messagelist
+    # Get messagelist
     messagelists = []
 
     temp_msg = sql_db.get_messages(username, receiver)
-    
+
     if temp_msg != None:
         for msg in temp_msg:
-
             messagelists.append([msg[3], msg[1]])
 
-    return page_view("friendlist",name=username, friend_num=firends_num, friendlists=friendlists,messages=messagelists,error_msg=error_msg)
+    return page_view("friendlist", name=username, friend_num=firends_num, friendlists=friendlists,
+                     messages=messagelists, error_msg=error_msg)
 
-#-----------------------------------------------------------------------------
+
+# -----------------------------------------------------------------------------
 
 def forum_form():
     '''
@@ -249,7 +253,8 @@ def forum_form():
     '''
     return page_view("forum")
 
-#-----------------------------------------------------------------------------
+
+# -----------------------------------------------------------------------------
 
 def rescources_form(username):
     '''
@@ -257,15 +262,16 @@ def rescources_form(username):
         Returns the view for the rescources_form
     '''
 
-    #Check if the user is not login
+    # Check if the user is not login
     if username == None:
         return page_view("invalid", reason="Please Login first")
-    
+
     return page_view("rescources")
 
-#-----------------------------------------------------------------------------
+
+# -----------------------------------------------------------------------------
 # About
-#-----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 def about():
     '''
@@ -275,25 +281,24 @@ def about():
     return page_view("about", garble=about_garble())
 
 
-
 # Returns a random string each time
 def about_garble():
     '''
         about_garble
         Returns one of several strings for the about page
     '''
-    garble = ["leverage agile frameworks to provide a robust synopsis for high level overviews.", 
-    "iterate approaches to corporate strategy and foster collaborative thinking to further the overall value proposition.",
-    "organically grow the holistic world view of disruptive innovation via workplace change management and empowerment.",
-    "bring to the table win-win survival strategies to ensure proactive and progressive competitive domination.",
-    "ensure the end of the day advancement, a new normal that has evolved from epistemic management approaches and is on the runway towards a streamlined cloud solution.",
-    "provide user generated content in real-time will have multiple touchpoints for offshoring."]
+    garble = ["leverage agile frameworks to provide a robust synopsis for high level overviews.",
+              "iterate approaches to corporate strategy and foster collaborative thinking to further the overall value proposition.",
+              "organically grow the holistic world view of disruptive innovation via workplace change management and empowerment.",
+              "bring to the table win-win survival strategies to ensure proactive and progressive competitive domination.",
+              "ensure the end of the day advancement, a new normal that has evolved from epistemic management approaches and is on the runway towards a streamlined cloud solution.",
+              "provide user generated content in real-time will have multiple touchpoints for offshoring."]
     return garble[random.randint(0, len(garble) - 1)]
 
 
-#-----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # Debug
-#-----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 def debug(cmd):
     try:
@@ -302,10 +307,10 @@ def debug(cmd):
         pass
 
 
-#-----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # 404
 # Custom 404 error page
-#-----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 def handle_errors(error):
     error_type = error.status_line
