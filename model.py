@@ -259,6 +259,7 @@ def forum_form(username):
         forum_form
         Returns the view for the forum_form
     '''
+    # Check if the user is not login
     if not username:
         return page_view("invalid", reason="Please Login first")
     return page_view("forum", is_admin=is_admin(username))
