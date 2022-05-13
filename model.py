@@ -252,10 +252,16 @@ def forum_form(username):
         Returns the view for the forum_form
     '''
     # Check if the user is not login
-    if username == None:
+    if not username:
         return page_view("invalid", reason="Please Login first")
-        
-    return page_view("forum")
+    sql_db = sql.SQLDatabase()
+    user_record = sql_db.get_user(username)
+    return page_view("forum", is_admin=user_record[0][3] == 'YES')
+
+
+# -----------------------------------------------------------------------------
+def post_page(username):
+    return page_view("postlist")
 
 
 # -----------------------------------------------------------------------------

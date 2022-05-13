@@ -1,10 +1,22 @@
+
+<!---https://bottlepy.org/docs/dev/stpl.html --->
 <center>
     <form action="/forum" method="post">
+
+
+<center>
+    <form action="/forum" method="post">
+
         <div>
             Section:
             <select>
                 <option>general</option>
                 <option>tech issue</option>
+
+                % if is_admin:
+                <option>admin</option>
+                % end
+
             </select>
         </div>
         <br>
@@ -12,6 +24,16 @@
             Title* :
             <input placeholder="Title"/>
         </div>
+
+        <br>
+        <div>
+            Content* :<br>
+            <textarea rows="5" cols="30"></textarea>
+        </div>
+        <br>
+        <button>POST</button>
+    </form>
+</center>
          <br>
         <div>
             Content* :<br>
@@ -22,3 +44,4 @@
     </form>
 </center>
 </p>
+
