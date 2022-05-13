@@ -10,13 +10,14 @@ import model
 import secrets
 import json
 
-#-----------------------------------------------------------------------------
-#Setup a secret key for cookies
+# -----------------------------------------------------------------------------
+# Setup a secret key for cookies
 global_secret = secrets.token_hex(16)
 
-#-----------------------------------------------------------------------------
+
+# -----------------------------------------------------------------------------
 # Static file paths
-#-----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 # Allow image loading
 @route('/img/<picture:path>')
@@ -32,7 +33,8 @@ def serve_pictures(picture):
     '''
     return static_file(picture, root='static/img/')
 
-#-----------------------------------------------------------------------------
+
+# -----------------------------------------------------------------------------
 
 # Allow CSS
 @route('/css/<css:path>')
@@ -48,7 +50,8 @@ def serve_css(css):
     '''
     return static_file(css, root='static/css/')
 
-#-----------------------------------------------------------------------------
+
+# -----------------------------------------------------------------------------
 
 # Allow javascript
 @route('/js/<js:path>')
@@ -64,9 +67,10 @@ def serve_js(js):
     '''
     return static_file(js, root='static/js/')
 
-#-----------------------------------------------------------------------------
+
+# -----------------------------------------------------------------------------
 # Pages
-#-----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 # Redirect to login
 @get('/')
@@ -79,7 +83,8 @@ def get_index():
     '''
     return model.index()
 
-#-----------------------------------------------------------------------------
+
+# -----------------------------------------------------------------------------
 
 # Display the login page
 @get('/login')
@@ -91,7 +96,8 @@ def get_login_controller():
     '''
     return model.login_form()
 
-#-----------------------------------------------------------------------------
+
+# -----------------------------------------------------------------------------
 
 # Attempt the login
 @post('/login')
@@ -106,11 +112,12 @@ def post_login():
     # Handle the form processing
     username = request.forms.get('username')
     password = request.forms.get('password')
-    
+
     # Call the appropriate method
     return model.login_check(username, password, global_secret)
 
-#-----------------------------------------------------------------------------
+
+# -----------------------------------------------------------------------------
 
 # Display the logout page
 @get('/logout')
@@ -121,12 +128,13 @@ def get_logout_controller():
         Serves the logout page
     '''
 
-    #Get cookies
+    # Get cookies
     username = request.get_cookie("account", secret=global_secret)
 
     return model.logout_form(username)
 
-#-----------------------------------------------------------------------------
+
+# -----------------------------------------------------------------------------
 
 # Attempt the register
 @post('/logout')
@@ -138,13 +146,14 @@ def post_logout():
         Expects a form containing 'logout' fields
     '''
 
-    #Get cookies
+    # Get cookies
     username = request.get_cookie("account", secret=global_secret)
-    
+
     # Call the appropriate method
     return model.logout_account(username, global_secret)
 
-#-----------------------------------------------------------------------------
+
+# -----------------------------------------------------------------------------
 
 # Display the register page
 @get('/register')
@@ -156,7 +165,8 @@ def get_register_controller():
     '''
     return model.register_form()
 
-#-----------------------------------------------------------------------------
+
+# -----------------------------------------------------------------------------
 
 # Attempt the register
 @post('/register')
@@ -173,12 +183,12 @@ def post_register():
     password = request.forms.get('password')
     confirem_password = request.forms.get('confirm_password')
     public_key = request.forms.get('user_public_key')
-    
+
     # Call the appropriate method
     return model.register_account(username, password, confirem_password, public_key)
 
 
-#-----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 # Add a friend
 @post('/friendlist')
@@ -190,7 +200,7 @@ def post_friendlist():
         Expects a form containing 'add_friend', 'messages' fields
     '''
 
-    #Get cookies
+    # Get cookies
     username = request.get_cookie("account", secret=global_secret)
 
     # Handle the form processing
@@ -201,7 +211,8 @@ def post_friendlist():
     # Call the appropriate method
     return model.friendlist_form(username, friend_username, messages, receiver)
 
-#-----------------------------------------------------------------------------
+
+# -----------------------------------------------------------------------------
 
 # Display the Chat with friends page
 @get('/friendlist')
@@ -212,12 +223,13 @@ def get_friendlist():
         Serves the friendlist page
     '''
 
-    #Get cookies
+    # Get cookies
     username = request.get_cookie("account", secret=global_secret)
 
     return model.friendlist_form(username, None, None, None)
 
-#-----------------------------------------------------------------------------
+
+# -----------------------------------------------------------------------------
 
 # Display the forum page
 @get('/forum')
@@ -227,10 +239,35 @@ def get_forum_controller():
         
         Serves the forum page
     '''
+    username = request.get_cookie("account", secret=global_secret)
+    return model.forum_form(username)
+
+
+@post('/forum')
+def get_forum_controller():
+    '''
+        get_forum
+
+        Serves the forum page
+    '''
+    pass
     return model.forum_form()
 
-#-----------------------------------------------------------------------------
 
+# -----------------------------------------------------------------------------
+# Display the post page
+@get('/forum')
+def get_forum_controller():
+    '''
+        get_forum
+
+        Serves the forum page
+    '''
+    username = request.get_cookie("account", secret=global_secret)
+    return model.forum_form(username)
+
+
+# -----------------------------------------------------------------------------
 # Display the rescources page
 @get('/rescources')
 def get_rescources_controller():
@@ -240,12 +277,13 @@ def get_rescources_controller():
         Serves the rescources page
     '''
 
-    #Get cookies
+    # Get cookies
     username = request.get_cookie("account", secret=global_secret)
 
     return model.rescources_form(username)
 
-#-----------------------------------------------------------------------------
+
+# -----------------------------------------------------------------------------
 
 @get('/about')
 def get_about():
@@ -255,16 +293,19 @@ def get_about():
         Serves the about page
     '''
     return model.about()
-#-----------------------------------------------------------------------------
+
+
+# -----------------------------------------------------------------------------
 
 # Help with debugging
 @post('/debug/<cmd:path>')
 def post_debug(cmd):
     return model.debug(cmd)
 
-#-----------------------------------------------------------------------------
+
+# -----------------------------------------------------------------------------
 
 # 404 errors, use the same trick for other types of errors
 @error(404)
-def error(error): 
+def error(error):
     return model.handle_errors(error)
