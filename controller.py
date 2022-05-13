@@ -258,11 +258,6 @@ def get_forum_controller():
     return model.add_post(username, title, content, section)
 
 
-    #Get cookies
-    username = request.get_cookie("account", secret=global_secret)
-
-    return model.forum_form(username)
-
 #-----------------------------------------------------------------------------
 
 # Add a friend
