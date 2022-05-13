@@ -259,6 +259,11 @@ def forum_form(username):
 
 
 # -----------------------------------------------------------------------------
+def post_page(username):
+    return page_view("postlist")
+
+
+# -----------------------------------------------------------------------------
 
 def rescources_form(username):
     '''

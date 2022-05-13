@@ -265,16 +265,17 @@ def get_forum_controller():
     return model.forum_form()
 
 
+# -----------------------------------------------------------------------------
 # Display the post page
-@get('/forum')
-def get_forum_controller():
+@get('/post')
+def get_post_controller():
     '''
         get_forum
 
         Serves the forum page
     '''
     username = request.get_cookie("account", secret=global_secret)
-    return model.forum_form(username)
+    return model.post_page(username)
 
 
 # -----------------------------------------------------------------------------
