@@ -10,6 +10,7 @@
 
                 % if is_admin:
                 <option value="admin">admin</option>
+                
                 % end
 
             </select>
@@ -27,6 +28,12 @@
         </div>
         <br>
         <button>POST</button>
+
+        % if is_admin:
+        <p>Admin Mute Function</p>
+        Username: <input name="username_mute" type="username_mute" />
+        <input value="Mute" type="submit" />
+        % end
     </form>
 </center>
 
