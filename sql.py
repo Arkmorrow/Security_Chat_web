@@ -79,6 +79,7 @@ class SQLDatabase():
             receiver_username TEXT,
             encrypted_messagge TEXT
         )""")
+        # Create the post table
         self.execute("""CREATE TABLE Posts(
                  Id INTEGER PRIMARY KEY,
                  title TEXT,
@@ -88,12 +89,14 @@ class SQLDatabase():
                  add_time datetime
              )""")
 
-        # Create the post table
-        self.execute("""CREATE TABLE Posts(
-            Id INTEGER PRIMARY KEY,
-            from_username TEXT,
-            post_detail TEXT
-        )""")
+        # Create the comment table
+        self.execute("""CREATE TABLE Comments(
+                 Id INTEGER PRIMARY KEY,
+                 post_id INTEGER,
+                 detail TEXT,
+                 sender_username TEXT,
+                 add_time datetime
+             )""")
 
         self.commit()
 
