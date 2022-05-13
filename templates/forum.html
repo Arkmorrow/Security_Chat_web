@@ -1,4 +1,3 @@
-
 <center>
     <form action="/forum" method="post">
 
@@ -10,7 +9,7 @@
 
                 % if is_admin:
                 <option value="admin">admin</option>
-                
+
                 % end
 
             </select>
@@ -27,12 +26,15 @@
             <textarea required name="content" rows="5" cols="30"></textarea>
         </div>
         <br>
-        <button>POST</button>
-
+        % if block:
+        <button disabled>POST</button>
+        % else:
+        <button >POST</button>
+        % end
         % if is_admin:
         <p>Admin Mute Function</p>
-        Username: <input name="username_mute" type="username_mute" />
-        <input value="Mute" type="submit" />
+        Username: <input name="username_mute" type="username_mute"/>
+        <input value="Mute" type="submit"/>
         % end
     </form>
 </center>

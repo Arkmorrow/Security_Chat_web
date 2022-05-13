@@ -262,7 +262,9 @@ def forum_form(username):
     # Check if the user is not login
     if not username:
         return page_view("invalid", reason="Please Login first")
-    return page_view("forum", is_admin=is_admin(username))
+    sql_db = sql.SQLDatabase()
+    block = sql_db.is_block(username)
+    return page_view("forum", is_admin=is_admin(username), block=block, username=username)
 
 
 def add_post(username, title, content, section):
@@ -279,16 +281,18 @@ def post_page(username, section=None):
     else:
         posts = sql_db.get_post_list()
     admin = is_admin(username)
+    block = sql_db.is_block(username)
     posts = [list(p) for p in posts]
     for p in posts:
-        sender = p[4]
-        p.append(admin or sender == username)
+        sender = sql_db.get_user(p[4])[0]
+        p[4] = sender
+        p.append(admin or sender[0] == username)
         comments = sql_db.get_comments(p[0])
         comments = [list(c) for c in comments]
         for c in comments:
             c.append(p.append(admin or c[3] == username))
         p.append(comments)
-    return page_view("postlist", is_admin=is_admin(username), posts=posts, username=username)
+    return page_view("postlist", is_admin=is_admin(username), posts=posts, username=username, block=block)
 
 
 def delete_post(username, post_id):
@@ -313,10 +317,12 @@ def add_comment(username, detail, post_id):
 
 # -----------------------------------------------------------------------------
 def profile_page(username):
-    # if not username:
-    #     return page_view("invalid", reason="Please Login first")
+    sql_db = sql.SQLDatabase()
+    if not username:
+        return page_view("invalid", reason="Please Login first")
     admin = is_admin(username)
-    return page_view("profile")
+    user = sql_db.get_user(username)[0]
+    return page_view("profile", admin=admin, user=user)
 
 
 # -----------------------------------------------------------------------------
@@ -326,7 +332,7 @@ def block_page(username):
     admin = is_admin(username)
     sql_db = sql.SQLDatabase()
     user_list = sql_db.get_user_list()
-    return page_view("block", user_list=user_list)
+    return page_view("block", user_list=user_list, admin=admin)
 
 
 # -----------------------------------------------------------------------------
@@ -347,6 +353,18 @@ def unblock_user(username, block_username):
     sql_db = sql.SQLDatabase()
     user_list = sql_db.block_user(block_username, 'NO')
     return redirect('/block')
+
+
+# -----------------------------------------------------------------------------
+def update_user(username, password, avatar):
+    sql_db = sql.SQLDatabase()
+    if password:
+        print("update password")
+        sql_db.update_password(username, password)
+    if avatar:
+        print("update avatar")
+        sql_db.update_avatar(username, avatar)
+    return redirect('/profile')
 
 
 # -----------------------------------------------------------------------------

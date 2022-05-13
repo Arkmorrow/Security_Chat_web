@@ -13,9 +13,9 @@
         <div class="d-flex flex-row align-items-center" style="margin-bottom:5px;">
             <span class="color-user d-flex flex-row align-items-center">
                 <img
-                        style="height: 30px;width:30px;" src="img/avatar.png"
+                        style="height: 30px;width:30px;" src="   {{ post[4][-2] }}"
                         alt="avatar">
-                {{ post[4] }}</span><span class="text-muted post-time">{{ post[5] }}</span>
+                {{ post[4][0] }}</span><span class="text-muted post-time">{{ post[5] }}</span>
             % if post[-2]:
             <a href="/delete_post?post_id={{ post[0] }}" style="margin-left:5px;">Delete</a>
             % end
@@ -32,7 +32,7 @@
                     <input type="hidden" name="post_id" value="{{ post[0] }}">
                     <textarea name="detail" style="width:100%" rows="1"></textarea>
                     <div class="d-flex flex-row align-items-center justify-content-end">
-                        % if username:
+                        % if not block:
                         <button>Comment</button>
                         % else:
                         <button disabled>Comment</button>

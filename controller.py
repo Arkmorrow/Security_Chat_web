@@ -327,6 +327,18 @@ def add_comment_controller():
 
 
 # -----------------------------------------------------------------------------
+@post('/update_profile')
+def update_profile():
+    '''
+        add_comment
+    '''
+    username = request.get_cookie("account", secret=global_secret)
+    password = request.forms.get('password',None)
+    avatar = request.forms.get('avatar',None)
+    return model.update_user(username, password, avatar)
+
+
+# -----------------------------------------------------------------------------
 
 @get('/profile')
 def profile_page():

@@ -59,12 +59,12 @@ class SQLDatabase():
             password TEXT,
             salt TEXT,
             admin TEXT DEFAULT 'NO',
-            avatar TEXT,
-            block TEXT,
             attempts INTEGER DEFAULT 0,
             block_time DATETIME DEFAULT NULL,
             public_key TEXT DEFAULT NULL,
-            mute TEXT DEFAULT 'NO'
+            mute TEXT DEFAULT 'NO',
+              avatar TEXT,
+            block TEXT
             
         )""")
 
@@ -118,7 +118,7 @@ class SQLDatabase():
     def add_user(self, username, password, admin):
         sql_cmd = """
                 INSERT INTO Users(username, password, salt, admin,block,avatar)
-                VALUES('{username}', '{password}', '{salt}', '{admin}','NO','')
+                VALUES('{username}', '{password}', '{salt}', '{admin}','NO','/img/avatar.png')
            """
 
         # Generate a random number as salt.
@@ -482,6 +482,31 @@ class SQLDatabase():
         self.execute(sql_cmd)
         self.commit()
         return True
+
+    def update_password(self, username, password):
+        salt = uuid.uuid4().hex
+        password_salt = salt + password
+        password_hash = hashlib.sha256(password_salt.encode()).hexdigest()
+        password_double_encrypted = bcrypt.hashpw(password_hash.encode('ascii'), bcrypt.gensalt()).hex()
+        sql_cmd = f"update Users set password='{password_double_encrypted}',salt='{salt}' where username='{username}'"
+        self.execute(sql_cmd)
+        self.commit()
+        return True
+
+    def update_avatar(self, username, avatar):
+        sql_cmd = f"update Users set avatar='{avatar}' where username='{username}'"
+        self.cur.execute(sql_cmd)
+        self.commit()
+        return True
+
+    def is_block(self, username):
+        sql_cmd = f"select block from Users where username='{username}'"
+        self.execute(sql_cmd)
+        data = self.cur.fetchall()
+        if not data:
+            return True
+        else:
+            return data[0][-1] == "YES"
 
 # sql = SQLDatabase()
 # sql.database_setup()
