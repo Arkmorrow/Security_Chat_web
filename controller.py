@@ -8,7 +8,6 @@ from bottle import route, get, post, error, request, static_file, response
 
 import model
 import secrets
-import json
 
 # -----------------------------------------------------------------------------
 # Setup a secret key for cookies
@@ -81,7 +80,8 @@ def get_index():
         
         Serves the index page
     '''
-    return model.index()
+    username = request.get_cookie("account", secret=global_secret)
+    return model.index(username)
 
 
 # -----------------------------------------------------------------------------
@@ -94,7 +94,8 @@ def get_login_controller():
         
         Serves the login page
     '''
-    return model.login_form()
+    username = request.get_cookie("account", secret=global_secret)
+    return model.login_form(username)
 
 
 # -----------------------------------------------------------------------------
@@ -253,7 +254,7 @@ def get_forum_controller():
     return model.add_post(username, title, content, section)
 
 
-#-----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 # Add a friend
 @post('/forum')
@@ -264,8 +265,7 @@ def post_forum():
         Handles post forum
     '''
 
-
-    #Get cookies
+    # Get cookies
     username = request.get_cookie("account", secret=global_secret)
 
     # Handle the form processing
@@ -286,7 +286,7 @@ def get_post_controller():
     '''
     section = request.query.get('section')
     username = request.get_cookie("account", secret=global_secret)
-    return model.post_page(username,section)
+    return model.post_page(username, section)
 
 
 @get('/delete_post')
@@ -324,6 +324,34 @@ def add_comment_controller():
     post_id = request.forms.get('post_id')
     detail = request.forms.get('detail')
     return model.add_comment(username, detail, post_id)
+
+
+# -----------------------------------------------------------------------------
+
+@get('/profile')
+def profile_page():
+    username = request.get_cookie("account", secret=global_secret)
+    return model.profile_page(username)
+
+
+@get('/block')
+def block_page():
+    username = request.get_cookie("account", secret=global_secret)
+    return model.block_page(username)
+
+
+@get('/block_user')
+def block_user():
+    username = request.get_cookie("account", secret=global_secret)
+    block_username = request.query.get('username')
+    return model.block_user(username, block_username)
+
+
+@get('/unblock_user')
+def block_user():
+    username = request.get_cookie("account", secret=global_secret)
+    block_username = request.query.get('username')
+    return model.unblock_user(username, block_username)
 
 
 # -----------------------------------------------------------------------------

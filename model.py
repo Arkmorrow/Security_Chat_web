@@ -29,12 +29,12 @@ def is_admin(username):
 # Index
 # -----------------------------------------------------------------------------
 
-def index():
+def index(username):
     '''
         index
         Returns the view for the index
     '''
-    return page_view("index")
+    return page_view("index", username=username)
 
 
 # -----------------------------------------------------------------------------
@@ -80,12 +80,12 @@ def register_account(username, password, confirem_password, public_key):
 
 # -----------------------------------------------------------------------------
 
-def login_form():
+def login_form(username):
     '''
         login_form
         Returns the view for the login_form
     '''
-    return page_view("login")
+    return page_view("login", username=username)
 
 
 # -----------------------------------------------------------------------------
@@ -309,6 +309,44 @@ def add_comment(username, detail, post_id):
     sql_db = sql.SQLDatabase()
     sql_db.add_comment(username, post_id, detail)
     return redirect('/post')
+
+
+# -----------------------------------------------------------------------------
+def profile_page(username):
+    # if not username:
+    #     return page_view("invalid", reason="Please Login first")
+    admin = is_admin(username)
+    return page_view("profile")
+
+
+# -----------------------------------------------------------------------------
+def block_page(username):
+    # if not username:
+    #     return page_view("invalid", reason="Please Login first")
+    admin = is_admin(username)
+    sql_db = sql.SQLDatabase()
+    user_list = sql_db.get_user_list()
+    return page_view("block", user_list=user_list)
+
+
+# -----------------------------------------------------------------------------
+def block_user(username, block_username):
+    # if not username:
+    #     return page_view("invalid", reason="Please Login first")
+    admin = is_admin(username)
+    sql_db = sql.SQLDatabase()
+    user_list = sql_db.block_user(block_username, 'YES')
+    return redirect('/block')
+
+
+# -----------------------------------------------------------------------------
+def unblock_user(username, block_username):
+    # if not username:
+    #     return page_view("invalid", reason="Please Login first")
+    admin = is_admin(username)
+    sql_db = sql.SQLDatabase()
+    user_list = sql_db.block_user(block_username, 'NO')
+    return redirect('/block')
 
 
 # -----------------------------------------------------------------------------

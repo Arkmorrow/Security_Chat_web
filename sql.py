@@ -59,6 +59,8 @@ class SQLDatabase():
             password TEXT,
             salt TEXT,
             admin TEXT DEFAULT 'NO',
+            avatar TEXT,
+            block TEXT,
             attempts INTEGER DEFAULT 0,
             block_time DATETIME DEFAULT NULL,
             public_key TEXT DEFAULT NULL,
@@ -115,8 +117,8 @@ class SQLDatabase():
     # Add a user to the database
     def add_user(self, username, password, admin):
         sql_cmd = """
-                INSERT INTO Users(username, password, salt, admin)
-                VALUES('{username}', '{password}', '{salt}', '{admin}')
+                INSERT INTO Users(username, password, salt, admin,block,avatar)
+                VALUES('{username}', '{password}', '{salt}', '{admin}','NO','')
            """
 
         # Generate a random number as salt.
@@ -469,6 +471,17 @@ class SQLDatabase():
         sql_cmd = f"select * from Comments where post_id={post_id}"
         self.execute(sql_cmd)
         return self.cur.fetchall()
+
+    def get_user_list(self):
+        sql_cmd = f"select username,avatar,block from Users"
+        self.execute(sql_cmd)
+        return self.cur.fetchall()
+
+    def block_user(self, username, block='YES'):
+        sql_cmd = f"update Users set block='{block}' where username='{username}'"
+        self.execute(sql_cmd)
+        self.commit()
+        return True
 
 # sql = SQLDatabase()
 # sql.database_setup()
