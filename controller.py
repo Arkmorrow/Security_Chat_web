@@ -253,6 +253,28 @@ def get_forum_controller():
     return model.add_post(username, title, content, section)
 
 
+#-----------------------------------------------------------------------------
+
+# Add a friend
+@post('/forum')
+def post_forum():
+    '''
+        post_forum
+        
+        Handles post forum
+    '''
+
+
+    #Get cookies
+    username = request.get_cookie("account", secret=global_secret)
+
+    # Handle the form processing
+    post_message = request.forms.get('add_friend')
+
+    # Call the appropriate method
+    return model.forum_form(username)
+
+
 # -----------------------------------------------------------------------------
 # Display the post page
 @get('/post')
