@@ -11,7 +11,7 @@ import sql
 import uuid
 import hashlib
 
-from bottle import response
+from bottle import response, redirect
 
 # Initialise our views, all arguments are defaults for the template
 page_view = view.View()
@@ -272,15 +272,43 @@ def add_post(username, title, content, section):
 
 
 # -----------------------------------------------------------------------------
-def post_page(username):
+def post_page(username, section=None):
     sql_db = sql.SQLDatabase()
-    posts = sql_db.get_post_list()
+    if section:
+        posts = sql_db.get_post_by_section(section)
+    else:
+        posts = sql_db.get_post_list()
     admin = is_admin(username)
     posts = [list(p) for p in posts]
     for p in posts:
         sender = p[4]
         p.append(admin or sender == username)
-    return page_view("postlist", is_admin=is_admin(username), posts=posts)
+        comments = sql_db.get_comments(p[0])
+        comments = [list(c) for c in comments]
+        for c in comments:
+            c.append(p.append(admin or c[3] == username))
+        p.append(comments)
+    return page_view("postlist", is_admin=is_admin(username), posts=posts, username=username)
+
+
+def delete_post(username, post_id):
+    sql_db = sql.SQLDatabase()
+    sql_db.delete_post(post_id)
+    print(post_id)
+    return redirect('/post')
+
+
+def delete_comment(username, c_id):
+    sql_db = sql.SQLDatabase()
+    sql_db.delete_comment(c_id)
+    return redirect('/post')
+
+
+# -----------------------------------------------------------------------------
+def add_comment(username, detail, post_id):
+    sql_db = sql.SQLDatabase()
+    sql_db.add_comment(username, post_id, detail)
+    return redirect('/post')
 
 
 # -----------------------------------------------------------------------------

@@ -234,11 +234,6 @@ def get_friendlist():
 # Display the forum page
 @get('/forum')
 def get_forum_controller():
-    '''
-        get_forum
-        
-        Serves the forum page
-    '''
     username = request.get_cookie("account", secret=global_secret)
     return model.forum_form(username)
 
@@ -258,32 +253,6 @@ def get_forum_controller():
     return model.add_post(username, title, content, section)
 
 
-    #Get cookies
-    username = request.get_cookie("account", secret=global_secret)
-
-    return model.forum_form(username)
-
-#-----------------------------------------------------------------------------
-
-# Add a friend
-@post('/forum')
-def post_forum():
-    '''
-        post_forum
-        
-        Handles post forum
-    '''
-
-
-    #Get cookies
-    username = request.get_cookie("account", secret=global_secret)
-
-    # Handle the form processing
-    post_message = request.forms.get('add_friend')
-
-    # Call the appropriate method
-    return model.forum_form(username)
-
 # -----------------------------------------------------------------------------
 # Display the post page
 @get('/post')
@@ -293,8 +262,46 @@ def get_post_controller():
 
         Serves the forum page
     '''
+    section = request.query.get('section')
     username = request.get_cookie("account", secret=global_secret)
-    return model.post_page(username)
+    return model.post_page(username,section)
+
+
+@get('/delete_post')
+def delete_post():
+    '''
+        get_forum
+
+        Serves the forum page
+    '''
+    username = request.get_cookie("account", secret=global_secret)
+    post_id = request.query.get('post_id')
+
+    return model.delete_post(username, post_id)
+
+
+@get('/delete_comment')
+def delete_delete_comment():
+    '''
+        get_forum
+
+        Serves the forum page
+    '''
+    username = request.get_cookie("account", secret=global_secret)
+    c_id = request.query.get('c_id')
+    return model.delete_comment(username, c_id)
+
+
+# -----------------------------------------------------------------------------
+@post('/comments')
+def add_comment_controller():
+    '''
+        add_comment
+    '''
+    username = request.get_cookie("account", secret=global_secret)
+    post_id = request.forms.get('post_id')
+    detail = request.forms.get('detail')
+    return model.add_comment(username, detail, post_id)
 
 
 # -----------------------------------------------------------------------------

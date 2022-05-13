@@ -50,6 +50,7 @@ class SQLDatabase():
         self.execute("DROP TABLE IF EXISTS Friends")
         self.execute("DROP TABLE IF EXISTS Messages")
         self.execute("DROP TABLE IF EXISTS Posts")
+        self.execute("DROP TABLE IF EXISTS Comments")
         self.commit()
 
         # Create the users table
@@ -446,6 +447,26 @@ class SQLDatabase():
 
     def get_post_by_section(self, section):
         sql_cmd = f"select * from Posts where section='{section}'"
+        self.execute(sql_cmd)
+        return self.cur.fetchall()
+
+    def add_comment(self, sender_username, post_id, detail):
+        add_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+        sql_query = f'insert into Comments(post_id,sender_username,detail,add_time) values' \
+                    f'("{post_id}","{sender_username}","{detail}","{add_time}") '
+        self.execute(sql_query)
+        self.commit()
+        return self.cur.lastrowid
+
+    def delete_comment(self, comment_id):
+        sql_cmd = f"delete from Comments where Id={comment_id}"
+        self.execute(sql_cmd)
+        self.commit()
+        return True
+
+    def get_comments(self, post_id):
+        sql_cmd = f"select * from Comments where post_id={post_id}"
         self.execute(sql_cmd)
         return self.cur.fetchall()
 
